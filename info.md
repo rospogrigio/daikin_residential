@@ -1,3 +1,7 @@
+[![](https://img.shields.io/github/release/rospogrigio/daikin_residential/all.svg?style=for-the-badge)](https://github.com/rospogrigio/daikin_residential/releases)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+[![](https://img.shields.io/badge/MAINTAINER-%40rospogrigio-green?style=for-the-badge)](https://github.com/rospogrigio)
+
 # daikin_residential
 Cloud control of Daikin devices that are supported by Daikin Residential Controller app.
 
