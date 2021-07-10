@@ -1,4 +1,4 @@
-# daikin_residential
+# Daikin Residential Controller homeassistant integration
 Cloud control of Daikin devices that are supported by Daikin Residential Controller app.
 
 # Installation:
