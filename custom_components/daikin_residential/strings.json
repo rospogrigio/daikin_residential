@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure Daikin Residential Controller AC",
+        "description": "No configuration parameters are needed in this menu.\n\nJust make sure that you have obtained your tokenset.json file using the MITM proxy procedure, and stored it in your configuration folder, then press Submit to proceed.",
+        "data": {
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "missing_config": "[%key:common::config_flow::abort::missing_config%]",
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
+    },
+    "error": {
+      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
+    }
+  }
+}
