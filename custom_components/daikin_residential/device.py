@@ -68,22 +68,26 @@ class DaikinResidentialDevice:
         """Helper method to traverse the Device object returned
         by Daikin cloud for subPath datapoints."""
         for key in obj.keys():
-            subKeys = obj[key].keys()
-            if (
-                key == "meta"
-                or "value" in subKeys
-                or "settable" in subKeys
-                or "unit" in subKeys
-            ):
-                # we found end leaf
-                # print('FINAL ' + pathPrefix + '/' + key)
+            if type(obj[key]) is not dict:
                 data[pathPrefix + "/" + key] = obj[key]
-            elif type(obj[key]) == dict:
-                # go one level deeper
-                # print('   found ' + key)
-                self._traverseDatapointStructure(obj[key], data, pathPrefix + "/" + key)
             else:
-                _LOGGER.error("SOMETHING IS WRONG WITH KEY %s", key)
+                subKeys = obj[key].keys()
+                if (
+                    key == "meta"
+                    or "value" in subKeys
+                    or "settable" in subKeys
+                    or "unit" in subKeys
+                ):
+                    # we found end leaf
+                    # print('FINAL ' + pathPrefix + '/' + key)
+                    data[pathPrefix + "/" + key] = obj[key]
+                elif type(obj[key]) == dict:
+                    # go one level deeper
+                    # print('   found ' + key)
+                    newPath = pathPrefix + "/" + key
+                    self._traverseDatapointStructure(obj[key], data, newPath)
+                else:
+                    _LOGGER.error("SOMETHING IS WRONG WITH KEY %s", key)
         return data
 
     def setJsonData(self, desc):
@@ -312,8 +316,8 @@ class DaikinResidentialDevice:
 
         if dataPoint not in self.managementPoints[managementPoint].keys() or (
             dataPointPath != ""
-            and dataPointPath not
-            in self.managementPoints[managementPoint][dataPoint].keys()
+            and dataPointPath
+            not in self.managementPoints[managementPoint][dataPoint].keys()
         ):
             raise Exception(
                 "Please provide a valid datapoint definition "
