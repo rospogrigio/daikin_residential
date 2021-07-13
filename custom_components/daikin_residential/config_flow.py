@@ -5,7 +5,7 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 
-from .__init__ import DaikinApi
+from .daikin_api import DaikinApi
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ class FlowHandler(config_entries.ConfigFlow):
 
         await self.async_set_unique_id("DaikinResidentialController")
 
-        return self.async_create_entry(title="daikin", data={})
+        return self.async_create_entry(title="Daikin", data={})
 
     async def _attempt_connection(self):
         """Create device."""

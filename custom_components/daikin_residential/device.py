@@ -336,7 +336,6 @@ class DaikinResidentialDevice:
         try:
             self._validateData(dataPoint + dataPointPath, dataPointDef, value)
         except Exception as error:
-            print(error)
             _LOGGER.error("FAILED to validate set_data params: %s", format(error))
             return
 
@@ -355,7 +354,6 @@ class DaikinResidentialDevice:
 
         _LOGGER.debug("Path: " + setPath + " , options: %s", setOptions)
 
-        self.api._delay_next_request = True
         res = await self.api.doBearerRequest(setPath, setOptions)
         _LOGGER.debug("RES IS {}".format(res))
         if res is True:

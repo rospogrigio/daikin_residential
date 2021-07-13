@@ -237,10 +237,8 @@ class DaikinClimate(ClimateEntity):
         """Set preset mode."""
         curr_mode = self.preset_mode
         if curr_mode != PRESET_NONE:
-            print("SETTING OFF {}".format(curr_mode))
             await self._device.set_preset_mode_status(curr_mode, ATTR_STATE_OFF)
         if preset_mode != PRESET_NONE:
-            print("SETTING ON {}".format(preset_mode))
             await self._device.set_preset_mode_status(preset_mode, ATTR_STATE_ON)
 
     @property
