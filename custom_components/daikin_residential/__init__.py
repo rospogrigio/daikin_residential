@@ -139,7 +139,16 @@ class DaikinApi:
             _LOGGER.debug("BEARER REQUEST JSON: %s", options["json"])
             res = requests.patch(resourceUrl, headers=headers, data=options["json"])
         else:
-            res = requests.get(resourceUrl, headers=headers)
+            try:
+                func = functools.partial(
+                    requests.get,
+                    resourceUrl,
+                    headers=headers,
+                )
+                res = await self.hass.async_add_executor_job(requests.get,resourceUrl,headers)
+                #res = requests.get(resourceUrl, headers=headers)
+            except Exception as e:
+                _LOGGER.error("REQUEST FAILED: %s", e)
         _LOGGER.debug("BEARER RESPONSE CODE: %s", res.status_code)
 
         if res.status_code == 200:
