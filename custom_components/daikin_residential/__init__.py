@@ -1,6 +1,7 @@
 """Platform for the Daikin AC."""
 import asyncio
 import datetime
+import functools
 import logging
 import requests
 import json
@@ -137,18 +138,24 @@ class DaikinApi:
         _LOGGER.debug("BEARER REQUEST HEADERS: %s", headers)
         if options is not None and "method" in options and options["method"] == "PATCH":
             _LOGGER.debug("BEARER REQUEST JSON: %s", options["json"])
-            res = requests.patch(resourceUrl, headers=headers, data=options["json"])
+            func = functools.partial(
+                requests.patch,
+                resourceUrl,
+                headers=headers,
+                data=options["json"],
+            )
+            #res = requests.patch(resourceUrl, headers=headers, data=options["json"])
         else:
-            try:
-                func = functools.partial(
-                    requests.get,
-                    resourceUrl,
-                    headers=headers,
-                )
-                res = await self.hass.async_add_executor_job(requests.get,resourceUrl,headers)
-                #res = requests.get(resourceUrl, headers=headers)
-            except Exception as e:
-                _LOGGER.error("REQUEST FAILED: %s", e)
+            func = functools.partial(
+                requests.get,
+                resourceUrl,
+                headers=headers,
+            )
+            #res = requests.get(resourceUrl, headers=headers)
+        try:
+            res = await self.hass.async_add_executor_job(func)
+        except Exception as e:
+            _LOGGER.error("REQUEST FAILED: %s", e)
         _LOGGER.debug("BEARER RESPONSE CODE: %s", res.status_code)
 
         if res.status_code == 200:
@@ -181,7 +188,17 @@ class DaikinApi:
             "AuthFlow": "REFRESH_TOKEN_AUTH",
             "AuthParameters": {"REFRESH_TOKEN": self.tokenSet["refresh_token"]},
         }
-        res = requests.post(url, headers=headers, json=ref_json)
+        try:
+            func = functools.partial(
+                requests.post,
+                url,
+                headers=headers,
+                json=ref_json,
+            )
+            res = await self.hass.async_add_executor_job(func)
+            #res = requests.post(url, headers=headers, json=ref_json)
+        except Exception as e:
+            _LOGGER.error("REQUEST FAILED: %s", e)
         _LOGGER.info("REFRESHACCESSTOKEN RESPONSE CODE: %s", res.status_code)
         _LOGGER.debug("REFRESHACCESSTOKEN RESPONSE: %s", res.json())
         res_json = res.json()
