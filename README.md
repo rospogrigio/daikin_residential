@@ -24,7 +24,9 @@ daikin_residential:
 
 # 2. Using config flow
 
-Start by going to Configuration - Integration and pressing the "+" button to create a new Integration, then select Daikin Residential Controller in the drop-down menu.
+Start by going to Configuration - Integration and pressing the "+ ADD INTEGRATION" button to create a new Integration, then select Daikin Residential Controller in the drop-down menu.
+
+Follow the instruction, you have actually nothing to configure, just make sure your tokenset.json fine is in the HA config folder. After pressing the "Submit" button, the integration will be added, and the Daikin devices connected to your cloud account will be created.
 
 
 # To-do list:
