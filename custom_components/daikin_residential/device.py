@@ -172,11 +172,17 @@ class DaikinResidentialDevice:
 
     def get_value(self, managementPoint=None, dataPoint=None, dataPointPath=""):
         """Get the current value of a data object."""
-        return self.get_data(managementPoint, dataPoint, dataPointPath)["value"]
+        data = self.get_data(managementPoint, dataPoint, dataPointPath)
+        if data is None:
+            return None
+        return data["value"]
 
     def get_valid_values(self, managementPoint=None, dataPoint=None, dataPointPath=""):
         """Get a list of the accepted values of a data object."""
-        return self.get_data(managementPoint, dataPoint, dataPointPath)["values"]
+        data = self.get_data(managementPoint, dataPoint, dataPointPath)
+        if data is None:
+            return None
+        return data["values"]
 
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
     async def updateData(self):
