@@ -165,6 +165,9 @@ class DaikinResidentialDevice:
             # return data from one managementPoint and dataPoint
             return self.managementPoints[managementPoint][dataPoint]
 
+        if dataPointPath not in self.managementPoints[managementPoint][dataPoint]:
+            return None
+
         return self.managementPoints[managementPoint][dataPoint][dataPointPath]
 
     def get_value(self, managementPoint=None, dataPoint=None, dataPointPath=""):
