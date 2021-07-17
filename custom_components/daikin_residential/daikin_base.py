@@ -108,11 +108,17 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
 
     def getValue(self, param):
         """Get the current value of a data object."""
-        return self.getData(param)["value"]
+        data = self.getData(param)
+        if data is None:
+            return None
+        return data["value"]
 
     def getValidValues(self, param):
         """Get the valid values of a data object."""
-        return self.getData(param)["values"]
+        data = self.getData(param)
+        if data is None:
+            return None
+        return data["values"]
 
     async def setValue(self, param, value):
         """Get the current value of a data object."""
