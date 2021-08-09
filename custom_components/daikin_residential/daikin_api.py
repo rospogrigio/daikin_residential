@@ -150,8 +150,10 @@ class DaikinApi:
         """Get array of DaikinResidentialDevice objects and get their data."""
         devices = await self.getCloudDeviceDetails()
         res = {}
-        for dev in devices or []:
-            res[dev["id"]] = Appliance(dev, self)
+        for dev_json in devices or []:
+            device = Appliance(dev_json, self)
+            if 'GATEWAY' not in device.getValue('gateway', 'modelInfo'):
+                res[dev_json["id"]] = device
         return res
 
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
