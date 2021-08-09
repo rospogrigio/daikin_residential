@@ -148,12 +148,12 @@ class DaikinApi:
 
     async def getCloudDevices(self):
         """Get array of DaikinResidentialDevice objects and get their data."""
-        devices = await self.getCloudDeviceDetails()
+        json_data = await self.getCloudDeviceDetails()
         res = {}
-        for dev_json in devices or []:
-            device = Appliance(dev_json, self)
+        for dev_data in json_data or []:
+            device = Appliance(dev_data, self)
             if 'GATEWAY' not in device.getValue('gateway', 'modelInfo'):
-                res[dev_json["id"]] = device
+                res[dev_data["id"]] = device
         return res
 
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
@@ -163,4 +163,5 @@ class DaikinApi:
 
         json_data = await self.getCloudDeviceDetails()
         for dev_data in json_data or []:
-            self.hass.data[DOMAIN][DAIKIN_DEVICES][dev_data["id"]].setJsonData(dev_data)
+            if dev_data["id"] in self.hass.data[DOMAIN][DAIKIN_DEVICES]:
+                self.hass.data[DOMAIN][DAIKIN_DEVICES][dev_data["id"]].setJsonData(dev_data)
