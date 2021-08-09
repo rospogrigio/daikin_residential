@@ -149,6 +149,9 @@ class DaikinApi:
     async def getCloudDevices(self):
         """Get array of DaikinResidentialDevice objects and get their data."""
         devices = await self.getCloudDeviceDetails()
+        jsonPath = self.hass.config.path("daikin_data.json")
+        with open(jsonPath, 'w') as jsonFile:
+            json.dump(devices, jsonFile, indent=4, sort_keys=True)
         res = {}
         for dev in devices or []:
             res[dev["id"]] = Appliance(dev, self)
