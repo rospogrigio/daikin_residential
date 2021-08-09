@@ -152,7 +152,7 @@ class DaikinApi:
         res = {}
         for dev_data in json_data or []:
             device = Appliance(dev_data, self)
-            if 'GATEWAY' not in device.getValue('gateway', 'modelInfo'):
+            if 'GATEWAY' not in device.get_value('gateway', 'modelInfo'):
                 res[dev_data["id"]] = device
         return res
 
