@@ -152,8 +152,11 @@ class DaikinApi:
         res = {}
         for dev_data in json_data or []:
             device = Appliance(dev_data, self)
-            if 'GATEWAY' not in device.get_value('gateway', 'modelInfo'):
-                res[dev_data["id"]] = device
+            device_model = device.get_value('gateway', 'modelInfo')
+            if device_model is None:
+                _LOGGER.info("Device '%s' is filtered out", device_model)
+            else:
+                 res[dev_data["id"]] = device
         return res
 
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
