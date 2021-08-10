@@ -144,11 +144,16 @@ class DaikinApi:
 
     async def getCloudDeviceDetails(self):
         """Get pure Device Data from the Daikin cloud devices."""
-        return await self.doBearerRequest("/v1/gateway-devices")
+        # return await self.doBearerRequest("/v1/gateway-devices")
+        dataFile = self.hass.config.path('daikin_data2.json')
+        jsonFile = open(dataFile)
+        json_data = json.load(jsonFile)
+        return json_data
 
     async def getCloudDevices(self):
         """Get array of DaikinResidentialDevice objects and get their data."""
         json_data = await self.getCloudDeviceDetails()
+
         res = {}
         for dev_data in json_data or []:
             device = Appliance(dev_data, self)
