@@ -8,7 +8,7 @@ from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
 from homeassistant.helpers.typing import HomeAssistantType
 
-from .const import DOMAIN, DAIKIN_API, DAIKIN_DEVICES, CONF_TOKENSET
+from .const import DOMAIN, DAIKIN_API, DAIKIN_DEVICES
 
 from .daikin_api import DaikinApi
 
@@ -31,10 +31,16 @@ MIN_TIME_BETWEEN_UPDATES = datetime.timedelta(seconds=15)
 COMPONENT_TYPES = ["climate", "sensor", "switch"]
 
 
-CONFIG_SCHEMA = vol.Schema(vol.All({DOMAIN: vol.Schema({
-    vol.Required(CONF_EMAIL): str,
-    vol.Required(CONF_PASSWORD): str,
-})}), extra=vol.ALLOW_EXTRA)
+CONFIG_SCHEMA = vol.Schema(
+    vol.All(
+        {
+            DOMAIN: vol.Schema(
+                {vol.Required(CONF_EMAIL): str, vol.Required(CONF_PASSWORD): str}
+            )
+        }
+    ),
+    extra=vol.ALLOW_EXTRA,
+)
 
 
 async def async_setup(hass, config):

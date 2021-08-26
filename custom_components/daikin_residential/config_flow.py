@@ -11,6 +11,7 @@ from .const import DOMAIN, CONF_TOKENSET
 
 _LOGGER = logging.getLogger(__name__)
 
+
 @config_entries.HANDLERS.register(DOMAIN)
 class FlowHandler(config_entries.ConfigFlow):
     """Handle a config flow."""
@@ -26,10 +27,7 @@ class FlowHandler(config_entries.ConfigFlow):
     def schema(self):
         """Return current schema."""
         return vol.Schema(
-            {
-                vol.Required(CONF_EMAIL): str,
-                vol.Required(CONF_PASSWORD): str,
-            }
+            {vol.Required(CONF_EMAIL): str, vol.Required(CONF_PASSWORD): str}
         )
 
     async def _create_entry(self, email, password, tokenSet):
@@ -43,12 +41,8 @@ class FlowHandler(config_entries.ConfigFlow):
         await self.async_set_unique_id("DaikinResidentialController")
 
         return self.async_create_entry(
-            title='Daikin',
-            data={
-                CONF_EMAIL: email,
-                CONF_PASSWORD: password,
-                CONF_TOKENSET: tokenSet
-            },
+            title="Daikin",
+            data={CONF_EMAIL: email, CONF_PASSWORD: password, CONF_TOKENSET: tokenSet},
         )
 
     async def _attempt_connection(self, email, password):
@@ -56,17 +50,14 @@ class FlowHandler(config_entries.ConfigFlow):
         try:
             daikin_api = DaikinApi(self.hass, None)
         except Exception:
-            print("CAZZO1")
             return self.async_abort(reason="missing_config")
         try:
             await daikin_api.retrieveAccessToken(email, password)
         except Exception:
-            print("CAZZO2")
             return self.async_abort(reason="token_retrieval_failed")
         try:
             await daikin_api.getApiInfo()
         except Exception:
-            print("CAZZO3")
             return self.async_abort(reason="cannot_connect")
 
         return await self._create_entry(email, password, daikin_api.tokenSet)
@@ -76,15 +67,11 @@ class FlowHandler(config_entries.ConfigFlow):
         if user_input is None:
             return self.async_show_form(step_id="user", data_schema=self.schema)
         return await self._attempt_connection(
-            user_input.get(CONF_EMAIL),
-            user_input.get(CONF_PASSWORD),
+            user_input.get(CONF_EMAIL), user_input.get(CONF_PASSWORD)
         )
 
     async def async_step_import(self, user_input):
         """Import a config entry from YAML."""
-        print("YAML DATA: {} {}".format(user_input.get(CONF_EMAIL), user_input.get(CONF_PASSWORD)))
-
         return await self._attempt_connection(
-            user_input.get(CONF_EMAIL),
-            user_input.get(CONF_PASSWORD),
+            user_input.get(CONF_EMAIL), user_input.get(CONF_PASSWORD)
         )
