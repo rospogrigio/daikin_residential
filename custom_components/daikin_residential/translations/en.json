@@ -3,7 +3,8 @@
         "abort": {
             "already_configured": "The integration is already configured.",
             "cannot_connect": "Failed to connect",
-            "missing_config": "tokenset.json file not found in config folder."
+            "missing_config": "tokenset.json file not found in config folder.",
+            "token_retrieval_failed": "Failed to retrieve access token set."
         },
         "error": {
             "cannot_connect": "Failed to connect",
@@ -16,8 +17,10 @@
         "step": {
             "user": {
                 "data": {
+		  "email": "Email address",
+		  "password": "Password"
                 },
-                "description": "No configuration parameters are needed in this menu.\n\nJust make sure that you have obtained your tokenset.json file using the MITM proxy procedure, and stored it in your configuration folder, then press Submit to proceed.",
+	        "description": "Enter the email address and password you use to login to Daikin Cloud, then press Submit.",
                 "title": "Configure Daikin Residential Controller AC"
             }
         }
