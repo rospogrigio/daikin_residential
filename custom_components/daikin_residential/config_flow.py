@@ -49,15 +49,18 @@ class FlowHandler(config_entries.ConfigFlow):
         """Create device."""
         try:
             daikin_api = DaikinApi(self.hass, None)
-        except Exception:
-            return self.async_abort(reason="missing_config")
+        except Exception as e:
+            _LOGGER.error("Failed to initialize DaikinApi: %s", e)
+            return self.async_abort(reason="init_failed")
         try:
             await daikin_api.retrieveAccessToken(email, password)
-        except Exception:
+        except Exception as e:
+            _LOGGER.error("Failed to retrieve Access Token: %s", e)
             return self.async_abort(reason="token_retrieval_failed")
         try:
             await daikin_api.getApiInfo()
-        except Exception:
+        except Exception as e:
+            _LOGGER.error("Failed to connect to DaikinApi: %s", e)
             return self.async_abort(reason="cannot_connect")
 
         return await self._create_entry(email, password, daikin_api.tokenSet)

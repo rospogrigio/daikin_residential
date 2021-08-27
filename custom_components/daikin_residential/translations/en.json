@@ -2,8 +2,8 @@
     "config": {
         "abort": {
             "already_configured": "The integration is already configured.",
-            "cannot_connect": "Failed to connect",
-            "missing_config": "tokenset.json file not found in config folder.",
+            "cannot_connect": "Failed to connect to Daikin Cloud.",
+            "init_failed": "Failed to initialize Daikin API.",
             "token_retrieval_failed": "Failed to retrieve access token set."
         },
         "error": {

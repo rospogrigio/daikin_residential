@@ -21,6 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 OPENID_CLIENT_ID = "7rk39602f0ds8lk0h076vvijnb"
 DAIKIN_CLOUD_URL = "https://daikin-unicloud-prod.auth.eu-west-1.amazoncognito.com"
+DAIKIN_ISSUER = "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_SLI9qJpc7"
 MIN_TIME_BETWEEN_UPDATES = datetime.timedelta(seconds=15)
 
 
@@ -29,19 +30,16 @@ class DaikinApi:
 
     def __init__(self, hass, entry):
         """Initialize a new Daikin Residential API."""
-        #        super()
+        _LOGGER.info("Initialing Daikin Residential API...")
         self.hass = hass
         self._config_entry = entry
         self.tokenSet = None
 
         if entry is not None:
             self.tokenSet = entry.data[CONF_TOKENSET].copy()
-        # print("CONFIG_ENTRY: {}".format(hass.config_entries['_entries']))
-        # print("CONFIG_ENTRY: {}".format(entry.data))
-        _LOGGER.info("Initialing Daikin Residential API...")
 
         configuration = {
-            "issuer": "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_SLI9qJpc7",
+            "issuer": DAIKIN_ISSUER,
             "authorization_endpoint": DAIKIN_CLOUD_URL + "/oauth2/authorize",
             "userinfo_endpoint": "userinfo_endpoint",
             "token_endpoint": DAIKIN_CLOUD_URL + "/oauth2/token",
@@ -50,13 +48,9 @@ class DaikinApi:
 
         self.openIdClientId = OPENID_CLIENT_ID
         self.openIdClient = Client(client_id=self.openIdClientId, config=configuration)
-        self.openIdClient.provider_config(configuration["issuer"])
         self.openIdStore = {}
 
-        _LOGGER.info("Initialized Daikin Residential API")
-        # _LOGGER.debug(
-        #     "Daikin Residential API token is [%s]", self.tokenSet["access_token"]
-        # )
+        _LOGGER.info("Daikin Residential API initialized.")
 
     async def doBearerRequest(self, resourceUrl, options=None, refreshed=False):
         if self.tokenSet is None:
@@ -125,7 +119,7 @@ class DaikinApi:
             # res = requests.post(url, headers=headers, json=ref_json)
         except Exception as e:
             _LOGGER.error("REQUEST FAILED: %s", e)
-        _LOGGER.info("REFRESHACCESSTOKEN RESPONSE CODE: %s", res.status_code)
+        _LOGGER.info("refreshAccessToken response code: %s", res.status_code)
         _LOGGER.debug("REFRESHACCESSTOKEN RESPONSE: %s", res.json())
         res_json = res.json()
         data = self._config_entry.data.copy()
@@ -146,7 +140,7 @@ class DaikinApi:
             self.hass.config_entries.async_update_entry(
                 entry=self._config_entry, data=data
             )
-            _LOGGER.info("TOKENSET REFRESHED.")
+            _LOGGER.info("TokenSet refreshed.")
             _LOGGER.debug("TOKENSET REFRESHED: %s", self._config_entry.data)
 
             return self.tokenSet
@@ -168,6 +162,10 @@ class DaikinApi:
             )
 
     async def _doAuthorizationRequest(self):
+        func = functools.partial(self.openIdClient.provider_config, DAIKIN_ISSUER)
+        await self.hass.async_add_executor_job(func)
+        # self.openIdClient.provider_config(DAIKIN_ISSUER)
+
         args = {"response_type": ["code"], "scope": "openid"}
         state = (
             base64.urlsafe_b64encode(os.urandom(32)).decode("utf-8").replace("=", "")
@@ -185,9 +183,11 @@ class DaikinApi:
         args.update(_args)
         self.openIdStore[state] = {"code_verifier": code_verifier}
 
-        auth_resp = self.openIdClient.do_authorization_request(
-            request_args=args, state=state
+        func = functools.partial(
+            self.openIdClient.do_authorization_request, request_args=args, state=state
         )
+        auth_resp = await self.hass.async_add_executor_job(func)
+
         self.state = state
         return auth_resp
 
@@ -224,12 +224,14 @@ class DaikinApi:
             }
             # _LOGGER.debug('CB PARAMS: %s', callbackParams)
             # _LOGGER.debug('PROVIDER_INFO: %s', self.openIdClient.provider_info)
-            rtk_resp = self.openIdClient.do_access_token_request(
+            func = functools.partial(
+                self.openIdClient.do_access_token_request,
                 request_args=args,
                 extra_args=callbackParams,
                 state=state,
                 authn_method=None,
             )
+            rtk_resp = await self.hass.async_add_executor_job(func)
             # _LOGGER.debug('_RETRIEVETOKENS RESP: %s', rtk_resp)
             new_tokenset = {
                 "access_token": rtk_resp["access_token"],
@@ -243,6 +245,7 @@ class DaikinApi:
             raise Exception("Daikin-Cloud: ERROR.")
 
     async def retrieveAccessToken(self, userName, password):
+        _LOGGER.info("Retrieving new TokenSet...")
         # Extract csrf state cookies
         try:
             response = await self._doAuthorizationRequest()
@@ -259,47 +262,54 @@ class DaikinApi:
             # _LOGGER.debug('CSRFSTATECOOKIE COOKIES: %s', csrfStateCookie)
             location = response.headers["location"]
             # _LOGGER.debug('LOCATION: %s', location)
-        except Exception:
-            raise Exception("Error trying to reach Authorization URL")
+        except Exception as e:
+            raise Exception("Error trying to reach Authorization URL: %s", e)
 
         # Extract SAML Context
         try:
-            # response = await got(location, { followRedirect: false })
-            response = requests.get(location, allow_redirects=False)
+            func = functools.partial(requests.get, location, allow_redirects=False)
+            response = await self.hass.async_add_executor_job(func)
+
             location = response.headers["location"]
             # _LOGGER.debug('LOCATION2: %s', location)
 
             regex = "samlContext=([^&]+)"
             ms = re.search(regex, location)
             samlContext = ms[1]
-        except Exception:
-            raise Exception("Error trying to follow redirect")
+        except Exception as e:
+            raise Exception("Error trying to follow redirect: %s", e)
+        _LOGGER.debug("SAMLCONTEXT: %s", samlContext)
 
         API_KEY = "3_xRB3jaQ62bVjqXU1omaEsPDVYC0Twi1zfq1zHPu_5HFT0zWkDvZJS97Yw1loJnTm"
         API_KEY2 = "3_QebFXhxEWDc8JhJdBWmvUd1e0AaWJCISbqe4QIHrk_KzNVJFJ4xsJ2UZbl8OIIFY"
 
         # Extract API version
         try:
-            body = requests.get(
-                "https://cdns.gigya.com/js/gigya.js", {"apiKey": API_KEY}
-            ).text
+            func = functools.partial(
+                requests.get, "https://cdns.gigya.com/js/gigya.js", {"apiKey": API_KEY}
+            )
+            resp = await self.hass.async_add_executor_job(func)
+            body = resp.text
             # _LOGGER.debug('BODY: %s', body)
             regex = "(\d+-\d-\d+)"
             ms = re.search(regex, body)
             version = ms[0]
             _LOGGER.debug("VERSION: %s", version)
-        except Exception:
-            raise Exception("Error trying to extract API version")
+        except Exception as e:
+            raise Exception("Error trying to extract API version: %s", e)
 
         # Extract the cookies used for the Single Sign On
         try:
-            ssoCookies = requests.get(
+            func = functools.partial(
+                requests.get,
                 "https://cdc.daikin.eu/accounts.webSdkBootstrap",
                 {"apiKey": API_KEY, "sdk": "js_latest", "format": "json"},
-            ).headers["set-cookie"]
+            )
+            resp = await self.hass.async_add_executor_job(func)
+            ssoCookies = resp.headers["set-cookie"]
             # _LOGGER.debug('SSOCOOKIES: %s', ssoCookies)
-        except Exception:
-            raise Exception("Error trying to extract SSO cookies")
+        except Exception as e:
+            raise Exception("Error trying to extract SSO cookies: %s", e)
 
         ssoCookies_arr = ssoCookies.split(", ")
         cookies = (
@@ -314,7 +324,6 @@ class DaikinApi:
         cookies += "gig_canary_ver_" + API_KEY2 + "=" + version + "; "
         cookies += "apiDomain_" + API_KEY2 + "=cdc.daikin.eu; "
         # _LOGGER.debug('COOKIES: %s', cookies)
-        _LOGGER.debug("SAMLCONTEXT: %s", samlContext)
 
         # OK, now let's try to Login
         login_token = ""
@@ -343,9 +352,13 @@ class DaikinApi:
             http_args = {}
             http_args["headers"] = headers
 
-            resp = requests.post(
-                "https://cdc.daikin.eu/accounts.login", headers=headers, data=req_json
+            func = functools.partial(
+                requests.post,
+                "https://cdc.daikin.eu/accounts.login",
+                headers=headers,
+                data=req_json,
             )
+            resp = await self.hass.async_add_executor_job(func)
             response = resp.json()
             _LOGGER.debug("LOGIN REPLY: %s", response)
 
@@ -358,8 +371,8 @@ class DaikinApi:
                 login_token = response["sessionInfo"]["login_token"]
             else:
                 raise Exception("Unknown Login error: " + response["errorDetails"])
-        except Exception:
-            raise Exception("Login failed")
+        except Exception as e:
+            raise Exception("Login failed: %s", e)
 
         # _LOGGER.debug('LOGIN TOKEN: %s', login_token)
 
@@ -375,11 +388,10 @@ class DaikinApi:
         try:
             headers = {"cookie": cookies}
             req_json = {"samlContext": samlContext, "loginToken": login_token}
-            response = requests.post(
-                "https://cdc.daikin.eu/saml/v2.0/" + API_KEY + "/idp/sso/continue",
-                headers=headers,
-                data=req_json,
-            ).text
+            url = "https://cdc.daikin.eu/saml/v2.0/" + API_KEY + "/idp/sso/continue"
+            func = functools.partial(requests.post, url, headers=headers, data=req_json)
+            resp = await self.hass.async_add_executor_job(func)
+            response = resp.text
             # _LOGGER.debug('SAML: %s', response)
             regex = 'name="SAMLResponse" value="([^"]+)"'
             ms = re.search(regex, response)
@@ -388,8 +400,8 @@ class DaikinApi:
             ms = re.search(regex, response)
             relayState = ms[1]
 
-        except Exception:
-            raise Exception("Authentication on SAML Identity Provider failed")
+        except Exception as e:
+            raise Exception("Authentication on SAML Identity Provider failed: %s", e)
         # _LOGGER.debug('SAMLRESPONSE: %s', samlResponse)
         # _LOGGER.debug('RELAYSTATE: %s', relayState)
 
@@ -402,12 +414,15 @@ class DaikinApi:
             }
             req_json = {"SAMLResponse": samlResponse, "RelayState": relayState}
             body = "SAMLResponse=" + samlResponse + "&RelayState=" + relayState
-            response = requests.post(
-                DAIKIN_CLOUD_URL + "/saml2/idpresponse",
+            url = DAIKIN_CLOUD_URL + "/saml2/idpresponse"
+            func = functools.partial(
+                requests.post,
+                url,
                 headers=headers,
                 data=req_json,
                 allow_redirects=False,
             )
+            response = await self.hass.async_add_executor_job(func)
             daikinunified_url = response.headers["location"]
             # _LOGGER.debug('DAIKINUNIFIED1: %s',response)
             # _LOGGER.debug('DAIKINUNIFIED2: %s',daikinunified)
@@ -417,23 +432,28 @@ class DaikinApi:
                     "Invalid final Authentication redirect. Location is "
                     + daikinunified_url
                 )
-        except Exception:
-            raise Exception("Impossible to retrieve SAML Identity Provider's response")
+        except Exception as e:
+            raise Exception(
+                "Impossible to retrieve SAML Identity Provider's response: %s", e
+            )
 
-        self.openIdClient.parse_response(
-            response=self.openIdClient.message_factory.get_response_type(
-                "authorization_endpoint"
-            ),
-            info=daikinunified_url,
-            sformat="urlencoded",
-            state=self.state,
-        )
+        try:
+            self.openIdClient.parse_response(
+                response=self.openIdClient.message_factory.get_response_type(
+                    "authorization_endpoint"
+                ),
+                info=daikinunified_url,
+                sformat="urlencoded",
+                state=self.state,
+            )
+        except Exception as e:
+            raise Exception("Failed to parse response: %s", e)
 
         try:
             self.tokenSet = await self._doAccessTokenRequest(daikinunified_url)
         except Exception as e:
-            raise Exception("Failed to retrieve access token: " + e)
-        _LOGGER.info("NEW TOKENSET RETRIEVED.")
+            raise Exception("Failed to retrieve access token: %s", e)
+        _LOGGER.info("New TokenSet successfully retrieved.")
 
     async def getApiInfo(self):
         """Get Daikin API Info."""

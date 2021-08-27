@@ -12,7 +12,7 @@
     },
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured]",
-      "missing_config": "[%key:common::config_flow::abort::missing_config%]",
+      "init_failed": "[%key:common::config_flow::abort::init_failed]",
       "token_retrieval_failed": "[%key:common::config_flow::abort::token_retrieval_failed]",
       "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
     },
