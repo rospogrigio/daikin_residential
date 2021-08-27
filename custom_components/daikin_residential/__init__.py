@@ -48,7 +48,7 @@ async def async_setup(hass, config):
 
     async def _handle_reload(service):
         """Handle reload service call."""
-        _LOGGER.debug("Reloading integration: retrieving new TokenSet.")
+        _LOGGER.info("Reloading integration: retrieving new TokenSet.")
         try:
             daikin_api = hass.data[DOMAIN][DAIKIN_API]
             data = daikin_api._config_entry.data.copy()
