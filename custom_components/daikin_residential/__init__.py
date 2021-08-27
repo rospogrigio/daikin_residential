@@ -8,7 +8,7 @@ from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD, SERVICE_RELOAD
 from homeassistant.helpers.typing import HomeAssistantType
 
-from .const import DOMAIN, DAIKIN_API, DAIKIN_DEVICES
+from .const import DOMAIN, DAIKIN_API, DAIKIN_DEVICES, CONF_TOKENSET
 
 from .daikin_api import DaikinApi
 
@@ -53,6 +53,10 @@ async def async_setup(hass, config):
             daikin_api = hass.data[DOMAIN][DAIKIN_API]
             data = daikin_api._config_entry.data.copy()
             await daikin_api.retrieveAccessToken(data[CONF_EMAIL], data[CONF_PASSWORD])
+            data[CONF_TOKENSET] = daikin_api.tokenSet
+            hass.config_entries.async_update_entry(
+                entry=daikin_api._config_entry, data=data
+            )
         except Exception as e:
             _LOGGER.error("Failed to reload integration: %s", e)
 
