@@ -22,6 +22,9 @@ _LOGGER = logging.getLogger(__name__)
 OPENID_CLIENT_ID = "7rk39602f0ds8lk0h076vvijnb"
 DAIKIN_CLOUD_URL = "https://daikin-unicloud-prod.auth.eu-west-1.amazoncognito.com"
 DAIKIN_ISSUER = "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_SLI9qJpc7"
+API_KEY = "3_xRB3jaQ62bVjqXU1omaEsPDVYC0Twi1zfq1zHPu_5HFT0zWkDvZJS97Yw1loJnTm"
+API_KEY2 = "3_QebFXhxEWDc8JhJdBWmvUd1e0AaWJCISbqe4QIHrk_KzNVJFJ4xsJ2UZbl8OIIFY"
+
 MIN_TIME_BETWEEN_UPDATES = datetime.timedelta(seconds=15)
 
 
@@ -279,9 +282,6 @@ class DaikinApi:
         except Exception as e:
             raise Exception("Error trying to follow redirect: %s", e)
         _LOGGER.debug("SAMLCONTEXT: %s", samlContext)
-
-        API_KEY = "3_xRB3jaQ62bVjqXU1omaEsPDVYC0Twi1zfq1zHPu_5HFT0zWkDvZJS97Yw1loJnTm"
-        API_KEY2 = "3_QebFXhxEWDc8JhJdBWmvUd1e0AaWJCISbqe4QIHrk_KzNVJFJ4xsJ2UZbl8OIIFY"
 
         # Extract API version
         try:

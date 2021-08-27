@@ -5,7 +5,7 @@ import logging
 import voluptuous as vol
 
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
-from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
+from homeassistant.const import CONF_EMAIL, CONF_PASSWORD, SERVICE_RELOAD
 from homeassistant.helpers.typing import HomeAssistantType
 
 from .const import DOMAIN, DAIKIN_API, DAIKIN_DEVICES
@@ -44,7 +44,22 @@ CONFIG_SCHEMA = vol.Schema(
 
 
 async def async_setup(hass, config):
-    """Establish connection with Daikin."""
+    """Setup the Daikin Residential component."""
+
+    async def _handle_reload(service):
+        """Handle reload service call."""
+        _LOGGER.debug("Reloading integration: retrieving new TokenSet.")
+        try:
+            daikin_api = hass.data[DOMAIN][DAIKIN_API]
+            data = daikin_api._config_entry.data.copy()
+            await daikin_api.retrieveAccessToken(data[CONF_EMAIL], data[CONF_PASSWORD])
+        except Exception as e:
+            _LOGGER.error("Failed to reload integration: %s", e)
+
+    hass.helpers.service.async_register_admin_service(
+        DOMAIN, SERVICE_RELOAD, _handle_reload
+    )
+
     if DOMAIN not in config:
         return True
 
@@ -55,6 +70,7 @@ async def async_setup(hass, config):
                 DOMAIN, context={"source": SOURCE_IMPORT}, data=conf
             )
         )
+
     return True
 
 
