@@ -33,7 +33,7 @@ class DaikinApi:
 
     def __init__(self, hass, entry):
         """Initialize a new Daikin Residential API."""
-        _LOGGER.info("Initialing Daikin Residential API...")
+        _LOGGER.debug("Initialing Daikin Residential API...")
         self.hass = hass
         self._config_entry = entry
         self.tokenSet = None
@@ -95,7 +95,7 @@ class DaikinApi:
             return True
 
         if not refreshed and res.status_code == 401:
-            _LOGGER.info("TOKEN EXPIRED: will refresh it (%s)", res.status_code)
+            _LOGGER.debug("TOKEN EXPIRED: will refresh it (%s)", res.status_code)
             await self.refreshAccessToken()
             return await self.doBearerRequest(resourceUrl, options, True)
 
@@ -122,8 +122,8 @@ class DaikinApi:
             # res = requests.post(url, headers=headers, json=ref_json)
         except Exception as e:
             _LOGGER.error("REQUEST FAILED: %s", e)
-        _LOGGER.info("refreshAccessToken response code: %s", res.status_code)
-        _LOGGER.debug("REFRESHACCESSTOKEN RESPONSE: %s", res.json())
+        _LOGGER.debug("refreshAccessToken response code: %s", res.status_code)
+        _LOGGER.debug("refreshAccessToken response: %s", res.json())
         res_json = res.json()
         data = self._config_entry.data.copy()
 
@@ -143,12 +143,12 @@ class DaikinApi:
             self.hass.config_entries.async_update_entry(
                 entry=self._config_entry, data=data
             )
-            _LOGGER.info("TokenSet refreshed.")
-            _LOGGER.debug("TOKENSET REFRESHED: %s", self._config_entry.data)
+            _LOGGER.debug("TokenSet refreshed.")
+            # _LOGGER.debug("TOKENSET REFRESHED: %s", self._config_entry.data)
 
             return self.tokenSet
 
-        _LOGGER.info(
+        _LOGGER.warning(
             "CANNOT REFRESH TOKENSET (%s): will login again "
             + "and retrieve a new tokenSet.",
             res.status_code,
@@ -471,7 +471,7 @@ class DaikinApi:
             device = Appliance(dev_data, self)
             device_model = device.get_value("gateway", "modelInfo")
             if device_model is None:
-                _LOGGER.info("Device '%s' is filtered out", device_model)
+                _LOGGER.warning("Device '%s' is filtered out", device_model)
             else:
                 res[dev_data["id"]] = device
         return res
