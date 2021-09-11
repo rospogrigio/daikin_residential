@@ -13,16 +13,19 @@ Alternatively, you can install daikin_residential through HACS by adding this re
 
 # Usage:
 
-**NOTE: You must have your Daikin Cloud token set stored as a tokenset.json file in your /config folder (the same where configuration.yaml is). For instructions on how to retrieve this file, follow the guide at https://github.com/Apollon77/daikin-controller-cloud/blob/main/PROXY.md .**
+**NOTE: since v.2.0.x, the tokenset.json file is no longer needed because the integration can connect and retrieve the tokens autonomously. When installing v.2.0.x from a previous one, the integration must be deleted and re-added.**
 
 The integration can be configured in two ways:
 
 # 1. YAML config files
 
-Just add the following line to your configuration.yaml file, and the Daikin devices connected to your cloud account will be created.
+Just add the following lines to your configuration.yaml file specifying the email and password used in the Daikin Residential App, and the Daikin devices connected to your cloud account will be created.
 
 ```
 daikin_residential:
+  email: [your_email]
+  password: [your_pwd]
+
 ```
 
 
@@ -30,7 +33,8 @@ daikin_residential:
 
 Start by going to Configuration - Integration and pressing the "+ ADD INTEGRATION" button to create a new Integration, then select Daikin Residential Controller in the drop-down menu.
 
-Follow the instruction, you have actually nothing to configure, just make sure your tokenset.json fine is in the HA config folder. After pressing the "Submit" button, the integration will be added, and the Daikin devices connected to your cloud account will be created.
+Follow the instructions, you just have to type the email and password used in the Daikin Residential App. After pressing the "Submit" button, the integration will be added, and the Daikin devices connected to your cloud account will be created.
+
 
 # To-do list:
 
@@ -39,4 +43,4 @@ Follow the instruction, you have actually nothing to configure, just make sure y
 
 # Thanks to:
 
-This code is based on @Apollon77 's great work, in finding a way to retrieve the token set, and to send the HTTP commands over the cloud. This integration would not exist without his precious job.
+This code is based on @Apollon77 's great work, in finding a way to retrieve the token set, and to send the HTTP commands over the cloud. This integration would not exist without his precious job, my job was just to find a way to port his code from nodeJS to python, and then create the integration.
