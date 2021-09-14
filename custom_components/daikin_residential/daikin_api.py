@@ -80,6 +80,7 @@ class DaikinApi:
         else:
             func = functools.partial(requests.get, resourceUrl, headers=headers)
             # res = requests.get(resourceUrl, headers=headers)
+        res = None
         try:
             res = await self.hass.async_add_executor_job(func)
         except Exception as e:
@@ -116,6 +117,7 @@ class DaikinApi:
             "AuthFlow": "REFRESH_TOKEN_AUTH",
             "AuthParameters": {"REFRESH_TOKEN": self.tokenSet["refresh_token"]},
         }
+        res = None
         try:
             func = functools.partial(requests.post, url, headers=headers, json=ref_json)
             res = await self.hass.async_add_executor_job(func)
