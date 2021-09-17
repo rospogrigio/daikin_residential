@@ -18,7 +18,7 @@ from urllib import parse
 
 _LOGGER = logging.getLogger(__name__)
 logging.basicConfig()  # TODO include function name/line numbers in _LOGGER
-logging.getLogger(__name__)
+# _LOGGER.setLevel(logging.DEBUG)  # Debug hack!
 
 class DaikinCloudController():
     """Daikin Cloud Controller."""
