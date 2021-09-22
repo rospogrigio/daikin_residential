@@ -24,7 +24,7 @@ class DaikinResidentialDevice:
         self.setJsonData(jsonData)
         self.name = self.get_value("climateControl", "name")
         # self.ip_address = device.device_ip
-        self._available = True
+        
         _LOGGER.info(
             "Initialized Daikin Residential Device '%s' (id %s)",
             self.name,
@@ -34,7 +34,10 @@ class DaikinResidentialDevice:
     @property
     def available(self) -> bool:
         """Return True if entity is available."""
-        return self._available
+        try:
+            return self.desc["isCloudConnectionUp"]["value"]
+        except:
+            return False
 
     def device_info(self):
         """Return a device description for device registry."""

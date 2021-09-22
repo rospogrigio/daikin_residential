@@ -142,6 +142,11 @@ class DaikinClimate(ClimateEntity):
             await self._device.set(values)
 
     @property
+    def available(self):
+        "Return the availability of the underlying device."""
+        return self._device.available
+
+    @property
     def supported_features(self):
         """Return the list of supported features."""
         return self._supported_features

@@ -40,6 +40,11 @@ class DaikinSwitch(ToggleEntity):
         self._name = f"{device.name} {switch_id}"
 
     @property
+    def available(self):
+        "Return the availability of the underlying device."""
+        return self._device.available
+
+    @property
     def unique_id(self):
         """Return a unique ID."""
         devID = self._device.getId()

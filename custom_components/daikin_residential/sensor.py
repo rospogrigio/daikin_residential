@@ -80,6 +80,11 @@ class DaikinSensor(Entity):
         self._device_attribute = monitored_state
 
     @property
+    def available(self):
+        "Return the availability of the underlying device."""
+        return self._device.available
+
+    @property
     def unique_id(self):
         """Return a unique ID."""
         devID = self._device.getId()
