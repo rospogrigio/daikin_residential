@@ -41,7 +41,7 @@ class DaikinSwitch(ToggleEntity):
 
     @property
     def available(self):
-        "Return the availability of the underlying device."""
+        """Return the availability of the underlying device."""
         return self._device.available
 
     @property
