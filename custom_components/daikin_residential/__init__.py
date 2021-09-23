@@ -96,13 +96,14 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry):
 
 async def async_unload_entry(hass, config_entry):
     """Unload a config entry."""
+    _LOGGER.debug("Unloading integration...")
     await asyncio.wait(
         [
             hass.config_entries.async_forward_entry_unload(config_entry, component)
             for component in COMPONENT_TYPES
         ]
     )
-    hass.data[DOMAIN].pop(config_entry.entry_id)
+    hass.data[DOMAIN].clear()
     if not hass.data[DOMAIN]:
         hass.data.pop(DOMAIN)
     return True
