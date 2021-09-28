@@ -80,11 +80,13 @@ class DaikinApi:
         else:
             func = functools.partial(requests.get, resourceUrl, headers=headers)
             # res = requests.get(resourceUrl, headers=headers)
-        res = None
+
         try:
             res = await self.hass.async_add_executor_job(func)
         except Exception as e:
             _LOGGER.error("REQUEST FAILED: %s", e)
+            raise e
+
         _LOGGER.debug("BEARER RESPONSE CODE: %s", res.status_code)
 
         if res.status_code == 200:
@@ -117,13 +119,15 @@ class DaikinApi:
             "AuthFlow": "REFRESH_TOKEN_AUTH",
             "AuthParameters": {"REFRESH_TOKEN": self.tokenSet["refresh_token"]},
         }
-        res = None
+
         try:
             func = functools.partial(requests.post, url, headers=headers, json=ref_json)
             res = await self.hass.async_add_executor_job(func)
             # res = requests.post(url, headers=headers, json=ref_json)
         except Exception as e:
             _LOGGER.error("REQUEST FAILED: %s", e)
+            raise e
+
         _LOGGER.debug("refreshAccessToken response code: %s", res.status_code)
         _LOGGER.debug("refreshAccessToken response: %s", res.json())
         res_json = res.json()
