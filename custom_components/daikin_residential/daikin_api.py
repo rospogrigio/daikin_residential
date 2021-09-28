@@ -91,7 +91,7 @@ class DaikinApi:
                 return res.json()
             except Exception:
                 return res.text
-        if res.status_code == 204:
+        elif res.status_code == 204:
             return True
 
         if not refreshed and res.status_code == 401:

@@ -121,7 +121,7 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         return data["values"]
 
     async def setValue(self, param, value):
-        """Get the current value of a data object."""
+        """Set the current value of a data object."""
         cmd_set = self.getCommandSet(param)
         return await self.set_data(cmd_set[0], cmd_set[1], cmd_set[2], value)
 
@@ -167,12 +167,12 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             return False
         return self.getValue(mode)
 
-    def set_preset_mode_status(self, mode, status):
+    async def set_preset_mode_status(self, mode, status):
         """Set the preset mode status."""
         mode = HA_PRESET_TO_DAIKIN[mode]
         if self.getData(mode) is None:
             return
-        return self.setValue(mode, status)
+        return await self.setValue(mode, status)
 
     @property
     def support_fan_rate(self):

@@ -342,7 +342,9 @@ class DaikinResidentialDevice:
             else self.managementPoints[managementPoint][dataPoint]
         )
         _LOGGER.debug(
-            "Trying to validate " + str(value) + " with description: %s",
+            "Trying to validate `%s` for %s with description: %s",
+            str(value),
+            dataPoint,
             format(dataPointDef),
         )
         try:
