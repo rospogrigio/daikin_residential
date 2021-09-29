@@ -33,6 +33,7 @@ from .const import (
     DAIKIN_DEVICES,
     ATTR_INSIDE_TEMPERATURE,
     ATTR_OUTSIDE_TEMPERATURE,
+    ATTR_ON_OFF,
     ATTR_STATE_OFF,
     ATTR_STATE_ON,
     ATTR_TARGET_TEMPERATURE,
@@ -263,13 +264,11 @@ class DaikinClimate(ClimateEntity):
 
     async def async_turn_on(self):
         """Turn device on."""
-        await self._device.set({})
+        await self._device.setValue(ATTR_ON_OFF, ATTR_STATE_ON)
 
     async def async_turn_off(self):
         """Turn device off."""
-        await self._device.set(
-            {HA_ATTR_TO_DAIKIN[ATTR_HVAC_MODE]: HA_HVAC_TO_DAIKIN[HVAC_MODE_OFF]}
-        )
+        await self._device.setValue(ATTR_ON_OFF, ATTR_STATE_OFF)
 
     @property
     def device_info(self):
