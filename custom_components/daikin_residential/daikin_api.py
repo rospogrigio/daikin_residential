@@ -489,7 +489,7 @@ class DaikinApi:
                 )
 
             # print a warning in case of error code from Daikin cloud
-            if dev_data["managementPoints"][1]["errorCode"]["value"]:
+            if dev_data["managementPoints"][1]["isInErrorState"]["value"]:
                 _LOGGER.warning("DEVICE %s in error with code '%s'",
                     dev_data["managementPoints"][1]["name"]["value"],
                     dev_data["managementPoints"][1]["errorCode"]["value"])
