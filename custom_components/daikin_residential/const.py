@@ -91,7 +91,9 @@ FAN_QUIET = "Silence"
 
 SWING_OFF = "Off"
 SWING_BOTH = "3D"
+SWING_BOTH_AUTO = "Auto 3D"
 SWING_VERTICAL = "Vertical"
+SWING_VERT_AUTO = "Auto Vertical"
 SWING_HORIZONTAL = "Horizontal"
 
 PRESET_STREAMER = "streamer"

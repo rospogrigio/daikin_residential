@@ -493,3 +493,24 @@ class DaikinApi:
                 _LOGGER.warning("DEVICE %s in error with code '%s'",
                     dev_data["managementPoints"][1]["name"]["value"],
                     dev_data["managementPoints"][1]["errorCode"]["value"])
+
+            # print info on devices
+            if dev_data["managementPoints"][1]["econoMode"]["value"] == "on":
+                _presetmode = "eco"
+            elif dev_data["managementPoints"][1]["powerfulMode"]["value"] == "on":
+                _presetmode = "powerful"
+            else:
+                _presetmode = "none"
+
+            _opmode = dev_data["managementPoints"][1]["operationMode"]["value"]
+
+            _LOGGER.debug("DEVICE %s: status=%s, mode=%s, hfan=%s, vfan=%s, preset=%s, streamer=%s",
+                dev_data["managementPoints"][1]["name"]["value"],
+                dev_data["managementPoints"][1]["onOffMode"]["value"],
+                _opmode,
+                dev_data["managementPoints"][1]["fanControl"]["value"]["operationModes"][_opmode]["fanDirection"]["horizontal"]["currentMode"]["value"],
+                dev_data["managementPoints"][1]["fanControl"]["value"]["operationModes"][_opmode]["fanDirection"]["vertical"]["currentMode"]["value"],
+                _presetmode,
+                dev_data["managementPoints"][1]["streamerMode"]["value"])
+
+        return True
