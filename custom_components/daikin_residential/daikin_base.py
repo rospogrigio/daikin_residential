@@ -3,6 +3,7 @@
 import logging
 
 from .device import DaikinResidentialDevice
+from datetime import datetime
 
 from .const import (
     PRESET_STREAMER,
@@ -312,7 +313,7 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
     @property
     def support_energy_consumption(self):
         """Return True if the device supports energy consumption monitoring."""
-        return self.getData(ATTR_OUTSIDE_TEMPERATURE) is not None
+        return self.getData(ATTR_ENERGY_CONSUMPTION) is not None
 
     def energy_consumption(self, mode, period):
         """Return the last hour cool power consumption of a given mode in kWh."""
@@ -322,6 +323,13 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         ]
         start_index = 7 if period == SENSOR_PERIOD_WEEKLY else 12
         return sum(energy_data[start_index:])
+
+    def current_month_energy_consumption(self, mode):
+        """Return the current month consumption of a given mode in kWh."""
+        data = self.getData(ATTR_ENERGY_CONSUMPTION)[mode]["m"]
+        current_month = datetime.now().month
+        consumption = data[current_month + 11]
+        return consumption
 
     async def set(self, settings):
         """Set settings on Daikin device."""

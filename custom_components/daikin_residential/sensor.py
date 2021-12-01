@@ -6,7 +6,7 @@ from homeassistant.const import (
     CONF_TYPE,
     CONF_UNIT_OF_MEASUREMENT,
 )
-from homeassistant.helpers.entity import Entity
+from homeassistant.components.sensor import SensorEntity
 
 from .daikin_base import Appliance
 
@@ -44,16 +44,23 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if device.support_outside_temperature:
             sensor = DaikinSensor.factory(device, ATTR_OUTSIDE_TEMPERATURE)
             sensors.append(sensor)
+
         if device.support_energy_consumption:
             for period in SENSOR_PERIODS:
                 sensor = DaikinSensor.factory(device, ATTR_COOL_ENERGY, period)
                 sensors.append(sensor)
                 sensor = DaikinSensor.factory(device, ATTR_HEAT_ENERGY, period)
                 sensors.append(sensor)
+            # LTS sensor
+            sensor = DaikinEnergySensor(device, ATTR_COOL_ENERGY)
+            sensors.append(sensor)
+            sensor = DaikinEnergySensor(device, ATTR_HEAT_ENERGY)
+            sensors.append(sensor)
+
     async_add_entities(sensors)
 
 
-class DaikinSensor(Entity):
+class DaikinSensor(SensorEntity):
     """Representation of a Sensor."""
 
     @staticmethod
@@ -139,6 +146,10 @@ class DaikinClimateSensor(DaikinSensor):
             return self._device.outside_temperature
         return None
 
+    @property
+    def state_class(self):
+        return "measurement"
+
 
 class DaikinPowerSensor(DaikinSensor):
     """Representation of a power/energy consumption sensor."""
@@ -151,3 +162,19 @@ class DaikinPowerSensor(DaikinSensor):
         if self._device_attribute == ATTR_HEAT_ENERGY:
             return round(self._device.energy_consumption("heating", self._period), 3)
         return None
+
+
+class DaikinEnergySensor(DaikinSensor):
+    """Representation of a power/energy consumption in a sensor Long-term Statistics."""
+
+    @property
+    def state(self):
+        if self._device_attribute == ATTR_COOL_ENERGY:
+            return self._device.current_month_energy_consumption("cooling")
+        if self._device_attribute == ATTR_HEAT_ENERGY:
+            return self._device.current_month_energy_consumption("heating")
+        return None
+
+    @property
+    def state_class(self):
+        return "total_increasing"
