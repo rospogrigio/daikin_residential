@@ -82,12 +82,16 @@ class DaikinApi:
         async with self._cloud_lock:
             _LOGGER.debug("BEARER REQUEST URL: %s", resourceUrl)
             _LOGGER.debug("BEARER REQUEST HEADERS: %s", headers)
-            if options is not None and "method" in options and options["method"] == "PATCH":
+            if (
+                options is not None
+                and "method" in options
+                and options["method"] == "PATCH"
+            ):
                 _LOGGER.debug("BEARER REQUEST JSON: %s", options["json"])
                 func = functools.partial(
                     requests.patch, resourceUrl, headers=headers, data=options["json"]
                 )
-                # res = requests.patch(resourceUrl, headers=headers, data=options["json"])
+                # res = requests.patch(resourceUrl, headers, data=options["json"])
             else:
                 func = functools.partial(requests.get, resourceUrl, headers=headers)
                 # res = requests.get(resourceUrl, headers=headers)
@@ -505,18 +509,27 @@ class DaikinApi:
                     dev_data
                 )
 
-            if dev_data["managementPoints"][1]["econoMode"]["value"] == "on":
+            _mode = "none"
+            if (
+                "econoMode" in dev_data["managementPoints"][1]
+                and dev_data["managementPoints"][1]["econoMode"]["value"] == "on"
+            ):
                 _mode = "eco"
-            elif dev_data["managementPoints"][1]["powerfulMode"]["value"] == "on":
+            if (
+                "powerfulMode" in dev_data["managementPoints"][1]
+                and dev_data["managementPoints"][1]["powerfulMode"]["value"] == "on"
+            ):
                 _mode = "powerful"
-            else:
-                _mode = "none"
 
-            _LOGGER.debug("DEVICE %s: %s/%s/%s/%s",
+            _LOGGER.debug(
+                "DEVICE %s: %s/%s/%s/%s",
                 dev_data["managementPoints"][1]["name"]["value"],
                 dev_data["managementPoints"][1]["onOffMode"]["value"],
                 dev_data["managementPoints"][1]["operationMode"]["value"],
                 _mode,
-                "streamer" if dev_data["managementPoints"][1]["streamerMode"]["value"] == "on" else "nostreamer")
+                "streamer"
+                if dev_data["managementPoints"][1]["streamerMode"]["value"] == "on"
+                else "nostreamer",
+            )
 
         return True
