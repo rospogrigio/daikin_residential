@@ -33,6 +33,7 @@ from .const import (
     DAIKIN_DEVICES,
     ATTR_INSIDE_TEMPERATURE,
     ATTR_OUTSIDE_TEMPERATURE,
+    ATTR_ON_OFF,
     ATTR_STATE_OFF,
     ATTR_STATE_ON,
     ATTR_TARGET_TEMPERATURE,
@@ -142,6 +143,11 @@ class DaikinClimate(ClimateEntity):
             await self._device.set(values)
 
     @property
+    def available(self):
+        """Return the availability of the underlying device."""
+        return self._device.available
+
+    @property
     def supported_features(self):
         """Return the list of supported features."""
         return self._supported_features
@@ -180,6 +186,12 @@ class DaikinClimate(ClimateEntity):
 
     async def async_set_temperature(self, **kwargs):
         """Set new target temperature."""
+        # The service climate.set_temperature can set the hvac_mode too, see
+        # https://www.home-assistant.io/integrations/climate/#service-climateset_temperature
+        # se we first set the hvac_mode, if provided, then the temperature.
+        if ATTR_HVAC_MODE in kwargs:
+            await self.async_set_hvac_mode(kwargs[ATTR_HVAC_MODE])
+
         await self._device.async_set_temperature(kwargs[ATTR_TEMPERATURE])
 
     @property
@@ -252,13 +264,11 @@ class DaikinClimate(ClimateEntity):
 
     async def async_turn_on(self):
         """Turn device on."""
-        await self._device.set({})
+        await self._device.setValue(ATTR_ON_OFF, ATTR_STATE_ON)
 
     async def async_turn_off(self):
         """Turn device off."""
-        await self._device.set(
-            {HA_ATTR_TO_DAIKIN[ATTR_HVAC_MODE]: HA_HVAC_TO_DAIKIN[HVAC_MODE_OFF]}
-        )
+        await self._device.setValue(ATTR_ON_OFF, ATTR_STATE_OFF)
 
     @property
     def device_info(self):

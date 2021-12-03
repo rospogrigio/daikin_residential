@@ -1,5 +1,7 @@
 *~
 .tox
+tools/daikin_data*.json
+tools/tokenset.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -130,3 +132,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# PyDev Eclipse projects
+.project
+.pydevproject
