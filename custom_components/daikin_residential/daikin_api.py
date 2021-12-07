@@ -513,20 +513,15 @@ class DaikinApi:
                 )
 
             _mode = "none"
-            if (
-                "econoMode" in dev_data["managementPoints"][1]
-                and dev_data["managementPoints"][1]["econoMode"]["value"] == "on"
-            ):
+            mp_data = dev_data["managementPoints"][1]
+            if "econoMode" in mp_data and mp_data["econoMode"]["value"] == "on":
                 _mode = "eco"
-            if (
-                "powerfulMode" in dev_data["managementPoints"][1]
-                and dev_data["managementPoints"][1]["powerfulMode"]["value"] == "on"
-            ):
+            if "powerfulMode" in mp_data and mp_data["powerfulMode"]["value"] == "on":
                 _mode = "powerful"
 
             _streamer = "not supported"
-            if "streamerMode" in dev_data["managementPoints"][1]:
-                _streamer = "streamer " + dev_data["managementPoints"][1]["streamerMode"]["value"]
+            if "streamerMode" in mp_data:
+                _streamer = "streamer " + mp_data["streamerMode"]["value"]
             _LOGGER.debug(
                 "DEVICE %s: %s/%s/%s/%s",
                 dev_data["managementPoints"][1]["name"]["value"],
