@@ -524,15 +524,16 @@ class DaikinApi:
             ):
                 _mode = "powerful"
 
+            _streamer = "not supported"
+            if "streamerMode" in dev_data["managementPoints"][1]:
+                _streamer = "streamer " + dev_data["managementPoints"][1]["streamerMode"]["value"]
             _LOGGER.debug(
                 "DEVICE %s: %s/%s/%s/%s",
                 dev_data["managementPoints"][1]["name"]["value"],
                 dev_data["managementPoints"][1]["onOffMode"]["value"],
                 dev_data["managementPoints"][1]["operationMode"]["value"],
                 _mode,
-                "streamer"
-                if dev_data["managementPoints"][1]["streamerMode"]["value"] == "on"
-                else "nostreamer",
+                _streamer,
             )
 
         return True

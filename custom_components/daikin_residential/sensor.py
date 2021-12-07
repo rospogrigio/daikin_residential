@@ -38,9 +38,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up Daikin climate based on config_entry."""
     sensors = []
     for dev_id, device in hass.data[DAIKIN_DOMAIN][DAIKIN_DEVICES].items():
-        sensor = DaikinSensor.factory(device, ATTR_INSIDE_TEMPERATURE)
-        sensors.append(sensor)
-
+        if device.support_inside_temperature:
+            sensor = DaikinSensor.factory(device, ATTR_INSIDE_TEMPERATURE)
+            sensors.append(sensor)
         if device.support_outside_temperature:
             sensor = DaikinSensor.factory(device, ATTR_OUTSIDE_TEMPERATURE)
             sensors.append(sensor)
