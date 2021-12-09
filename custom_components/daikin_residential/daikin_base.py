@@ -283,14 +283,14 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
     @property
     def outside_temperature(self):
         """Return current outside temperature."""
-        if not self.support_outside_temperature():
+        if not self.support_outside_temperature:
             return None
         return float(self.getValue(ATTR_OUTSIDE_TEMPERATURE))
 
     @property
     def inside_temperature(self):
         """Return current inside temperature."""
-        if not self.support_inside_temperature():
+        if not self.support_inside_temperature:
             return None
         return float(self.getValue(ATTR_INSIDE_TEMPERATURE))
 
