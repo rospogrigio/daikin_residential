@@ -106,7 +106,6 @@ class DaikinSensor(SensorEntity):
         """Return the state of the sensor."""
         raise NotImplementedError
 
-
     @property
     def device_class(self):
         """Return the class of this device."""
@@ -147,6 +146,7 @@ class DaikinClimateSensor(DaikinSensor):
     @property
     def state_class(self):
         return STATE_CLASS_MEASUREMENT
+
 
 class DaikinEnergySensor(DaikinSensor):
     """Representation of a power/energy consumption sensor."""
