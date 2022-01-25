@@ -488,9 +488,12 @@ class DaikinApi:
         res = {}
         for dev_data in json_data or []:
             device = Appliance(dev_data, self)
-            device_model = device.get_value("gateway", "modelInfo")
-            if device_model is None:
+            gateway_model = device.get_value("gateway", "modelInfo")
+            device_model = device.desc["deviceModel"]
+            if gateway_model is None:
                 _LOGGER.warning("Device with ID '%s' is filtered out", dev_data["id"])
+            elif device_model == "Altherma":
+                _LOGGER.warning("Device with ID '%s' is filtered out because it is an Altherma", dev_data["id"])
             else:
                 res[dev_data["id"]] = device
         return res
