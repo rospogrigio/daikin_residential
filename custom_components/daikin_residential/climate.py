@@ -21,6 +21,7 @@ from homeassistant.components.climate.const import (
     PRESET_ECO,
     PRESET_NONE,
     SUPPORT_TARGET_TEMPERATURE,
+    SUPPORT_TARGET_TEMPERATURE_RANGE,
     SUPPORT_FAN_MODE,
     SUPPORT_PRESET_MODE,
     SUPPORT_SWING_MODE,
@@ -99,7 +100,7 @@ class DaikinClimate(ClimateEntity):
             ATTR_SWING_MODE: self._device.swing_modes,
         }
 
-        self._supported_features = SUPPORT_TARGET_TEMPERATURE
+        self._supported_features = SUPPORT_TARGET_TEMPERATURE | SUPPORT_TARGET_TEMPERATURE_RANGE
 
         self._supported_preset_modes = [PRESET_NONE]
         self._current_preset_mode = PRESET_NONE
@@ -177,6 +178,16 @@ class DaikinClimate(ClimateEntity):
     def target_temperature(self):
         """Return the temperature we try to reach."""
         return self._device.target_temperature
+
+    @property
+    def target_temperature_high(self):
+        """Return the highbound temperature we try to reach."""
+        return self._device.target_temperature_high
+
+    @property
+    def target_temperature_low(self):
+        """Return the lowbound temperature we try to reach."""
+        return self._device.target_temperature_low
 
     @property
     def target_temperature_step(self):
