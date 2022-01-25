@@ -179,14 +179,14 @@ class DaikinClimate(ClimateEntity):
         return self._device.target_temperature
 
     @property
-    def target_temperature_high(self):
-        """Return the highbound temperature we try to reach."""
-        return self._device.target_temperature_high
+    def max_temp(self):
+        """Return the maximum temperature we are allowed to set."""
+        return self._device.max_temp
 
     @property
-    def target_temperature_low(self):
-        """Return the lowbound temperature we try to reach."""
-        return self._device.target_temperature_low
+    def min_temp(self):
+        """Return the minimum temperature we are allowed to set."""
+        return self._device.min_temp
 
     @property
     def target_temperature_step(self):
