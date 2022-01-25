@@ -304,6 +304,22 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         return float(self.getValue(ATTR_TARGET_TEMPERATURE))
 
     @property
+    def target_temperature_high(self):
+        """Return current highbound temperature."""
+        operationMode = self.getValue(ATTR_OPERATION_MODE)
+        if operationMode not in ["auto", "cooling", "heating"]:
+            return None
+        return float(self.getData(ATTR_TARGET_TEMPERATURE)["maxValue"])
+
+    @property
+    def target_temperature_low(self):
+        """Return current lowbound temperature."""
+        operationMode = self.getValue(ATTR_OPERATION_MODE)
+        if operationMode not in ["auto", "cooling", "heating"]:
+            return None
+        return float(self.getData(ATTR_TARGET_TEMPERATURE)["minValue"])
+
+    @property
     def target_temperature_step(self):
         """Return current target temperature."""
         operationMode = self.getValue(ATTR_OPERATION_MODE)
