@@ -339,7 +339,7 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
     @property
     def support_energy_consumption(self):
         """Return True if the device supports energy consumption monitoring."""
-        return self.getData(ATTR_OUTSIDE_TEMPERATURE) is not None
+        return self.getData(ATTR_ENERGY_CONSUMPTION) is not None
 
     def energy_consumption(self, mode, period):
         """Return the last hour cool power consumption of a given mode in kWh."""
