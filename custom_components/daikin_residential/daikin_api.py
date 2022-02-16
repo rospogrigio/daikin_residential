@@ -484,16 +484,19 @@ class DaikinApi:
 
     async def getCloudDevices(self):
         """Get array of DaikinResidentialDevice objects and get their data."""
-        json_data = await self.getCloudDeviceDetails()
+        self.json_data = await self.getCloudDeviceDetails()
         res = {}
-        for dev_data in json_data or []:
+        for dev_data in self.json_data or []:
             device = Appliance(dev_data, self)
             gateway_model = device.get_value("gateway", "modelInfo")
             device_model = device.desc["deviceModel"]
             if gateway_model is None:
                 _LOGGER.warning("Device with ID '%s' is filtered out", dev_data["id"])
             elif device_model == "Altherma":
-                _LOGGER.warning("Device with ID '%s' is filtered out because it is an Altherma", dev_data["id"])
+                _LOGGER.warning(
+                    "Device with ID '%s' is filtered out because it is an Altherma",
+                    dev_data["id"],
+                )
             else:
                 res[dev_data["id"]] = device
         return res
@@ -508,8 +511,8 @@ class DaikinApi:
 
         _LOGGER.debug("API UPDATE")
 
-        json_data = await self.getCloudDeviceDetails()
-        for dev_data in json_data or []:
+        self.json_data = await self.getCloudDeviceDetails()
+        for dev_data in self.json_data or []:
             if dev_data["id"] in self.hass.data[DOMAIN][DAIKIN_DEVICES]:
                 self.hass.data[DOMAIN][DAIKIN_DEVICES][dev_data["id"]].setJsonData(
                     dev_data
