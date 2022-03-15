@@ -57,22 +57,22 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             sensor = DaikinSensor.factory(device, ATTR_OUTSIDE_TEMPERATURE)
             sensors.append(sensor)
         if device.support_is_coolheatmaster:
-            sensor = DaikinClimateSensor.factory(device, ATTR_IS_COOLHEATMASTER)
+            sensor = DaikinSensor.factory(device, ATTR_IS_COOLHEATMASTER)
             sensors.append(sensor)
         if device.support_is_in_error_state:
-            sensor = DaikinClimateSensor.factory(device, ATTR_IS_IN_ERROR_STATE)
+            sensor = DaikinSensor.factory(device, ATTR_IS_IN_ERROR_STATE)
             sensors.append(sensor)
         if device.support_is_in_mode_conflict:
-            sensor = DaikinClimateSensor.factory(device, ATTR_IS_IN_MODECONFLICT)
+            sensor = DaikinSensor.factory(device, ATTR_IS_IN_MODECONFLICT)
             sensors.append(sensor)
         if device.support_is_in_warning_state:
-            sensor = DaikinClimateSensor.factory(device, ATTR_IS_IN_WARNING_STATE)
+            sensor = DaikinSensor.factory(device, ATTR_IS_IN_WARNING_STATE)
             sensors.append(sensor)
         if device.support_is_lock_function_enabled:
-            sensor = DaikinClimateSensor.factory(device, ATTR_IS_LOCK_FUNCTION_ENABLED)
+            sensor = DaikinSensor.factory(device, ATTR_IS_LOCK_FUNCTION_ENABLED)
             sensors.append(sensor)
         if device.support_is_powerful_mode_active:
-            sensor = DaikinClimateSensor.factory(device, ATTR_IS_POWERFUL_MODE_ACTIVE)
+            sensor = DaikinSensor.factory(device, ATTR_IS_POWERFUL_MODE_ACTIVE)
             sensors.append(sensor)
         if device.support_energy_consumption:
             for period in SENSOR_PERIODS:
@@ -94,6 +94,7 @@ class DaikinSensor(SensorEntity):
             SENSOR_TYPE_HUMIDITY: DaikinClimateSensor,
             SENSOR_TYPE_POWER: DaikinEnergySensor,
             SENSOR_TYPE_ENERGY: DaikinEnergySensor,
+            SENSOR_TYPE_INFO: DaikinInfoSensor,
         }[SENSOR_TYPES[monitored_state][CONF_TYPE]]
         return cls(device, monitored_state, period)
 
@@ -167,6 +168,18 @@ class DaikinClimateSensor(DaikinSensor):
             return self._device.inside_temperature
         if self._device_attribute == ATTR_OUTSIDE_TEMPERATURE:
             return self._device.outside_temperature
+        return None
+
+    @property
+    def state_class(self):
+        return STATE_CLASS_MEASUREMENT
+
+class DaikinInfoSensor(DaikinSensor):
+    """Representation of a Climate Sensor."""
+
+    @property
+    def state(self):
+        """Return the internal state of the sensor."""
         if self._device_attribute == ATTR_IS_COOLHEATMASTER:
             return self._device.is_coolheatmaster
         if self._device_attribute == ATTR_IS_HOLIDAYMODE_ACTIVE:
@@ -188,6 +201,7 @@ class DaikinClimateSensor(DaikinSensor):
     @property
     def state_class(self):
         return STATE_CLASS_MEASUREMENT
+
 
 
 class DaikinEnergySensor(DaikinSensor):
