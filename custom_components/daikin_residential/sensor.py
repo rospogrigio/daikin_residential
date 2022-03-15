@@ -57,22 +57,22 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             sensor = DaikinSensor.factory(device, ATTR_OUTSIDE_TEMPERATURE)
             sensors.append(sensor)
         if device.support_is_coolheatmaster:
-            sensor = DaikinSensor.factory(device, ATTR_IS_COOLHEATMASTER)
+            sensor = DaikinClimateSensor.factory(device, ATTR_IS_COOLHEATMASTER)
             sensors.append(sensor)
         if device.support_is_in_error_state:
-            sensor = DaikinSensor.factory(device, ATTR_IS_IN_ERROR_STATE)
+            sensor = DaikinClimateSensor.factory(device, ATTR_IS_IN_ERROR_STATE)
             sensors.append(sensor)
         if device.support_is_in_mode_conflict:
-            sensor = DaikinSensor.factory(device, ATTR_IS_IN_MODECONFLICT)
+            sensor = DaikinClimateSensor.factory(device, ATTR_IS_IN_MODECONFLICT)
             sensors.append(sensor)
         if device.support_is_in_warning_state:
-            sensor = DaikinSensor.factory(device, ATTR_IS_IN_WARNING_STATE)
+            sensor = DaikinClimateSensor.factory(device, ATTR_IS_IN_WARNING_STATE)
             sensors.append(sensor)
         if device.support_is_lock_function_enabled:
-            sensor = DaikinSensor.factory(device, ATTR_IS_LOCK_FUNCTION_ENABLED)
+            sensor = DaikinClimateSensor.factory(device, ATTR_IS_LOCK_FUNCTION_ENABLED)
             sensors.append(sensor)
         if device.support_is_powerful_mode_active:
-            sensor = DaikinSensor.factory(device, ATTR_IS_POWERFUL_MODE_ACTIVE)
+            sensor = DaikinClimateSensor.factory(device, ATTR_IS_POWERFUL_MODE_ACTIVE)
             sensors.append(sensor)
         if device.support_energy_consumption:
             for period in SENSOR_PERIODS:
