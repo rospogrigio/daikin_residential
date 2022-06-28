@@ -8,6 +8,7 @@ from homeassistant.const import (
     CONF_TYPE,
     CONF_UNIT_OF_MEASUREMENT,
     DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_ENERGY,
     ENERGY_KILO_WATT_HOUR,
     TEMP_CELSIUS,
 )
@@ -128,12 +129,14 @@ SENSOR_TYPES = {
         CONF_NAME: "Cool Energy Consumption",
         CONF_TYPE: SENSOR_TYPE_ENERGY,
         CONF_ICON: "mdi:snowflake",
+        CONF_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
         CONF_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
     },
     ATTR_HEAT_ENERGY: {
         CONF_NAME: "Heat Energy Consumption",
         CONF_TYPE: SENSOR_TYPE_ENERGY,
         CONF_ICON: "mdi:fire",
+        CONF_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
         CONF_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
     },
 }

@@ -7,6 +7,7 @@ import os
 import re
 import requests
 import time
+import asyncio
 from oic.oic import Client
 from urllib import parse
 
@@ -53,6 +54,15 @@ class DaikinApi:
         self.openIdClient = Client(client_id=self.openIdClientId, config=configuration)
         self.openIdStore = {}
 
+        # The Daikin cloud returns old settings if queried with a GET
+        # immediately after a PATCH request. Se we use this attribute
+        # to skip the first GET if a PATCH request has just been executed.
+        self._just_updated = False
+
+        # The following lock is used to serialize http requests to Daikin cloud
+        # to prevent receiving old settings while a PATCH is ongoing.
+        self._cloud_lock = asyncio.Lock()
+
         _LOGGER.info("Daikin Residential API initialized.")
 
     async def doBearerRequest(self, resourceUrl, options=None, refreshed=False):
@@ -69,22 +79,27 @@ class DaikinApi:
             "Content-Type": "application/json",
         }
 
-        _LOGGER.debug("BEARER REQUEST URL: %s", resourceUrl)
-        _LOGGER.debug("BEARER REQUEST HEADERS: %s", headers)
-        if options is not None and "method" in options and options["method"] == "PATCH":
-            _LOGGER.debug("BEARER REQUEST JSON: %s", options["json"])
-            func = functools.partial(
-                requests.patch, resourceUrl, headers=headers, data=options["json"]
-            )
-            # res = requests.patch(resourceUrl, headers=headers, data=options["json"])
-        else:
-            func = functools.partial(requests.get, resourceUrl, headers=headers)
-            # res = requests.get(resourceUrl, headers=headers)
-        try:
-            res = await self.hass.async_add_executor_job(func)
-        except Exception as e:
-            _LOGGER.error("REQUEST FAILED: %s", e)
-        _LOGGER.debug("BEARER RESPONSE CODE: %s", res.status_code)
+        async with self._cloud_lock:
+            _LOGGER.debug("BEARER REQUEST URL: %s", resourceUrl)
+            _LOGGER.debug("BEARER REQUEST HEADERS: %s", headers)
+            if (
+                options is not None
+                and "method" in options
+                and options["method"] == "PATCH"
+            ):
+                _LOGGER.debug("BEARER REQUEST JSON: %s", options["json"])
+                func = functools.partial(
+                    requests.patch, resourceUrl, headers=headers, data=options["json"]
+                )
+                # res = requests.patch(resourceUrl, headers, data=options["json"])
+            else:
+                func = functools.partial(requests.get, resourceUrl, headers=headers)
+                # res = requests.get(resourceUrl, headers=headers)
+            try:
+                res = await self.hass.async_add_executor_job(func)
+            except Exception as e:
+                _LOGGER.error("REQUEST FAILED: %s", e)
+            _LOGGER.debug("BEARER RESPONSE CODE: %s", res.status_code)
 
         if res.status_code == 200:
             try:
@@ -92,6 +107,7 @@ class DaikinApi:
             except Exception:
                 return res.text
         elif res.status_code == 204:
+            self._just_updated = True
             return True
 
         if not refreshed and res.status_code == 401:
@@ -116,12 +132,15 @@ class DaikinApi:
             "AuthFlow": "REFRESH_TOKEN_AUTH",
             "AuthParameters": {"REFRESH_TOKEN": self.tokenSet["refresh_token"]},
         }
+
         try:
             func = functools.partial(requests.post, url, headers=headers, json=ref_json)
             res = await self.hass.async_add_executor_job(func)
             # res = requests.post(url, headers=headers, json=ref_json)
         except Exception as e:
             _LOGGER.error("REQUEST FAILED: %s", e)
+            raise e
+
         _LOGGER.debug("refreshAccessToken response code: %s", res.status_code)
         _LOGGER.debug("refreshAccessToken response: %s", res.json())
         res_json = res.json()
@@ -465,13 +484,19 @@ class DaikinApi:
 
     async def getCloudDevices(self):
         """Get array of DaikinResidentialDevice objects and get their data."""
-        json_data = await self.getCloudDeviceDetails()
+        self.json_data = await self.getCloudDeviceDetails()
         res = {}
-        for dev_data in json_data or []:
+        for dev_data in self.json_data or []:
             device = Appliance(dev_data, self)
-            device_model = device.get_value("gateway", "modelInfo")
-            if device_model is None:
-                _LOGGER.warning("Device '%s' is filtered out", device_model)
+            gateway_model = device.get_value("gateway", "modelInfo")
+            device_model = device.desc["deviceModel"]
+            if gateway_model is None:
+                _LOGGER.warning("Device with ID '%s' is filtered out", dev_data["id"])
+            elif device_model == "Altherma":
+                _LOGGER.warning(
+                    "Device with ID '%s' is filtered out because it is an Altherma",
+                    dev_data["id"],
+                )
             else:
                 res[dev_data["id"]] = device
         return res
@@ -479,10 +504,15 @@ class DaikinApi:
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
     async def async_update(self, **kwargs):
         """Pull the latest data from Daikin."""
+        if self._just_updated:
+            self._just_updated = False
+            _LOGGER.debug("API UPDATE skipped (just updated from UI)")
+            return False
+
         _LOGGER.debug("API UPDATE")
 
-        json_data = await self.getCloudDeviceDetails()
-        for dev_data in json_data or []:
+        self.json_data = await self.getCloudDeviceDetails()
+        for dev_data in self.json_data or []:
             if dev_data["id"] in self.hass.data[DOMAIN][DAIKIN_DEVICES]:
                 self.hass.data[DOMAIN][DAIKIN_DEVICES][dev_data["id"]].setJsonData(
                     dev_data
@@ -495,22 +525,27 @@ class DaikinApi:
                     dev_data["managementPoints"][1]["errorCode"]["value"])
 
             # print info on devices
-            if dev_data["managementPoints"][1]["econoMode"]["value"] == "on":
-                _presetmode = "eco"
-            elif dev_data["managementPoints"][1]["powerfulMode"]["value"] == "on":
-                _presetmode = "powerful"
-            else:
-                _presetmode = "none"
+            mp_data = dev_data["managementPoints"][1]
 
-            _opmode = dev_data["managementPoints"][1]["operationMode"]["value"]
+            _presetmode = "none"
+            if "econoMode" in mp_data and mp_data["econoMode"]["value"] == "on":
+                _presetmode = "eco"
+            if "powerfulMode" in mp_data and mp_data["powerfulMode"]["value"] == "on":
+                _presetmode = "powerful"
+
+            _streamer = "not supported"
+            if "streamerMode" in mp_data:
+                _streamer = mp_data["streamerMode"]["value"]
+
+            _opmode = mp_data["operationMode"]["value"]
 
             _LOGGER.debug("DEVICE %s: status=%s, mode=%s, hfan=%s, vfan=%s, preset=%s, streamer=%s",
-                dev_data["managementPoints"][1]["name"]["value"],
-                dev_data["managementPoints"][1]["onOffMode"]["value"],
+                mp_data["name"]["value"],
+                mp_data["onOffMode"]["value"],
                 _opmode,
-                dev_data["managementPoints"][1]["fanControl"]["value"]["operationModes"][_opmode]["fanDirection"]["horizontal"]["currentMode"]["value"],
-                dev_data["managementPoints"][1]["fanControl"]["value"]["operationModes"][_opmode]["fanDirection"]["vertical"]["currentMode"]["value"],
+                mp_data["fanControl"]["value"]["operationModes"][_opmode]["fanDirection"]["horizontal"]["currentMode"]["value"],
+                mp_data["fanControl"]["value"]["operationModes"][_opmode]["fanDirection"]["vertical"]["currentMode"]["value"],
                 _presetmode,
-                dev_data["managementPoints"][1]["streamerMode"]["value"])
+                _streamer)
 
         return True

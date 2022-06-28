@@ -179,6 +179,16 @@ class DaikinClimate(ClimateEntity):
         return self._device.target_temperature
 
     @property
+    def max_temp(self):
+        """Return the maximum temperature we are allowed to set."""
+        return self._device.max_temp
+
+    @property
+    def min_temp(self):
+        """Return the minimum temperature we are allowed to set."""
+        return self._device.min_temp
+
+    @property
     def target_temperature_step(self):
         """Return the supported step of target temperature."""
         stepVal = self._device.target_temperature_step
