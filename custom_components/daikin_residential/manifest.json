@@ -9,7 +9,7 @@
   ],
   "issue_tracker": "https://github.com/rospogrigio/daikin_residential/issues",
   "requirements": [
-     "oic==1.2.1"
+     "oic==1.4.0"
   ],
   "iot_class": "cloud_polling",
   "config_flow": true
