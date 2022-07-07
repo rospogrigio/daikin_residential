@@ -204,7 +204,7 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
                 minVal = int(fixedModes["minValue"])
                 maxVal = int(fixedModes["maxValue"])
                 for val in range(minVal, maxVal + 1):
-                    fanModes.append(str(val))
+                    fanModes.append(val)
         return fanModes
 
     async def async_set_fan_mode(self, mode):
