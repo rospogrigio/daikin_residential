@@ -99,6 +99,7 @@ class DaikinApi:
                 res = await self.hass.async_add_executor_job(func)
             except Exception as e:
                 _LOGGER.error("REQUEST FAILED: %s", e)
+                raise e
             _LOGGER.debug("BEARER RESPONSE CODE: %s", res.status_code)
 
         if res.status_code == 200:
