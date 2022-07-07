@@ -26,6 +26,14 @@ from .const import (
     ATTR_SWING_STOP,
     ATTR_ENERGY_CONSUMPTION,
     SENSOR_PERIOD_WEEKLY,
+    ATTR_IS_COOLHEATMASTER,
+    ATTR_IS_HOLIDAYMODE_ACTIVE,
+    ATTR_IS_IN_CAUTION_STATE,
+    ATTR_IS_IN_ERROR_STATE,
+    ATTR_IS_IN_MODECONFLICT,
+    ATTR_IS_IN_WARNING_STATE,
+    ATTR_IS_LOCK_FUNCTION_ENABLED,
+    ATTR_IS_POWERFUL_MODE_ACTIVE,
 )
 
 from homeassistant.components.climate.const import (
@@ -349,6 +357,86 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         ]
         start_index = 7 if period == SENSOR_PERIOD_WEEKLY else 12
         return sum(energy_data[start_index:])
+
+    @property
+    def support_is_coolheatmaster(self):
+        """Return True if the device supports isCoolHeatMaster."""
+        return self.getData(ATTR_IS_COOLHEATMASTER) is not None
+
+    @property
+    def is_coolheatmaster(self):
+        """Return current isCoolHeatMaster."""
+        return self.getValue(ATTR_IS_COOLHEATMASTER)
+
+    @property
+    def support_is_holidaymode_active(self):
+        """Return True if the device supports isHolidayModeActive."""
+        return self.getData(ATTR_IS_HOLIDAYMODE_ACTIVE) is not None
+
+    @property
+    def is_holidaymode_active(self):
+        """Return current isHolidayModeActive."""
+        return self.getValue(ATTR_IS_HOLIDAYMODE_ACTIVE)
+
+    @property
+    def support_is_in_caution_state(self):
+        """Return True if the device supports isInCautionState."""
+        return self.getData(ATTR_IS_IN_CAUTION_STATE) is not None
+
+    @property
+    def is_in_caution_state(self):
+        """Return current isInCautionState."""
+        return self.getValue(ATTR_IS_IN_CAUTION_STATE)
+
+    @property
+    def support_is_in_error_state(self):
+        """Return True if the device supports isInErrorState."""
+        return self.getData(ATTR_IS_IN_ERROR_STATE) is not None
+
+    @property
+    def is_in_error_state(self):
+        """Return current isInErrorState."""
+        return self.getValue(ATTR_IS_IN_ERROR_STATE)
+
+    @property
+    def support_is_in_mode_conflict(self):
+        """Return True if the device supports isInModeConflict."""
+        return self.getData(ATTR_IS_IN_MODECONFLICT) is not None
+
+    @property
+    def is_in_mode_conflict(self):
+        """Return current isInModeConflict."""
+        return self.getValue(ATTR_IS_IN_MODECONFLICT)
+
+    @property
+    def support_is_in_warning_state(self):
+        """Return True if the device supports isInWarningState."""
+        return self.getData(ATTR_IS_IN_WARNING_STATE) is not None
+
+    @property
+    def is_in_warning_state(self):
+        """Return current isInWarningState."""
+        return self.getValue(ATTR_IS_IN_WARNING_STATE)
+
+    @property
+    def support_is_lock_function_enabled(self):
+        """Return True if the device supports isLockFunctionEnabled."""
+        return self.getData(ATTR_IS_LOCK_FUNCTION_ENABLED) is not None
+
+    @property
+    def is_lock_function_enabled(self):
+        """Return current isLockFunctionEnabled."""
+        return self.getValue(ATTR_IS_LOCK_FUNCTION_ENABLED)
+
+    @property
+    def support_is_powerful_mode_active(self):
+        """Return True if the device supports isPowerfulModeActive."""
+        return self.getData(ATTR_IS_POWERFUL_MODE_ACTIVE) is not None
+
+    @property
+    def is_powerful_mode_active(self):
+        """Return current isPowerfulModeActive."""
+        return self.getValue(ATTR_IS_POWERFUL_MODE_ACTIVE)
 
     async def set(self, settings):
         """Set settings on Daikin device."""
