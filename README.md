@@ -5,6 +5,7 @@ Cloud control of Daikin devices that are supported by Daikin Residential Control
 
 This integration is verified to be compatible with the following Daikin adapters (usually integrated in the device):
 - BRP069C4x
+The integration might work on Other newer adapters as well, but it is not guaranteed.
 
 # Installation:
 
