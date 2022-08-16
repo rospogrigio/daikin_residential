@@ -1,6 +1,11 @@
 # Daikin Residential Controller homeassistant integration
 Cloud control of Daikin devices that are supported by Daikin Residential Controller app. When you want to control a Daikin Altherma you can't use this integration but use the [daikin_residential_altherma](https://github.com/speleolontra/daikin_residential_altherma) or [daikin_residential_brp069a62](https://github.com/BigFoot2020/daikin_residential_brp069a62) integration.
 
+# Compatibility
+
+This integration is verified to be compatible with the following Daikin adapters (usually integrated in the device):
+- BRP069C4x
+
 # Installation:
 
 Copy the daikin_residential folder and all of its contents into your Home Assistant's custom_components folder. This is often located inside of your /config folder. If you are running Hass.io, use SAMBA to copy the folder over. If you are running Home Assistant Supervised, the custom_components folder might be located at /usr/share/hassio/homeassistant. It is possible that your custom_components folder does not exist. If that is the case, create the folder in the proper location, and then copy the daikin_residential folder and all of its contents inside the newly created custom_components folder.
