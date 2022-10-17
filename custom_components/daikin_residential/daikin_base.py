@@ -160,7 +160,8 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
     def support_preset_mode(self, mode):
         """Return True if the device supports preset mode."""
         mode = HA_PRESET_TO_DAIKIN[mode]
-        return self.getData(mode) is not None
+        mode_data = self.getData(mode)
+        return mode_data is not None and "value" in mode_data
 
     def preset_mode_status(self, mode):
         """Return the preset mode status."""
