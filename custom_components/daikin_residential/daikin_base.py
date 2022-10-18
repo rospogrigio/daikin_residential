@@ -8,6 +8,7 @@ from .const import (
     PRESET_STREAMER,
     ATTR_INSIDE_TEMPERATURE,
     ATTR_OUTSIDE_TEMPERATURE,
+    ATTR_WIFI_STRENGTH,
     ATTR_STATE_OFF,
     ATTR_STATE_ON,
     ATTR_TARGET_TEMPERATURE,
@@ -349,6 +350,16 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         ]
         start_index = 7 if period == SENSOR_PERIOD_WEEKLY else 12
         return sum(energy_data[start_index:])
+    
+    @property
+    def support_wifi_strength(self):
+        """Return True if the device supports wifi connection strength."""
+        return self.getData(ATTR_WIFI_STRENGTH) is not None
+
+    @property
+    def wifi_strength(self):
+        """Return current wifi connection strength."""
+        return self.getValue(ATTR_WIFI_STRENGTH) if self.support_wifi_strength else None
 
     async def set(self, settings):
         """Set settings on Daikin device."""

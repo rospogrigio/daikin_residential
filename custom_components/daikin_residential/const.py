@@ -9,8 +9,10 @@ from homeassistant.const import (
     CONF_UNIT_OF_MEASUREMENT,
     DEVICE_CLASS_TEMPERATURE,
     DEVICE_CLASS_ENERGY,
+    DEVICE_CLASS_SIGNAL_STRENGTH,
     ENERGY_KILO_WATT_HOUR,
     TEMP_CELSIUS,
+    SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
 )
 
 DOMAIN = "daikin_residential"
@@ -29,6 +31,7 @@ ATTR_TEMPERATURE = "temperature"
 ATTR_TARGET_TEMPERATURE = "target_temperature"
 ATTR_INSIDE_TEMPERATURE = "inside_temperature"
 ATTR_OUTSIDE_TEMPERATURE = "outside_temperature"
+ATTR_WIFI_STRENGTH = "wifi_strength"
 ATTR_ENERGY_CONSUMPTION = "energy_consumption"
 ATTR_HUMIDITY = "humidity"
 ATTR_TARGET_HUMIDITY = "target_humidity"
@@ -43,12 +46,14 @@ ATTR_COOL_ENERGY = "cool_energy"
 ATTR_HEAT_ENERGY = "heat_energy"
 
 MP_CLIMATE = "climateControl"
+MP_GATEWAY = "gateway"
 DP_ON_OFF = "onOffMode"
 DP_OPERATION_MODE = "operationMode"
 DP_SENSORS = "sensoryData"
 DP_TEMPERATURE = "temperatureControl"
 DP_FAN = "fanControl"
 DP_CONSUMPTION = "consumptionData"
+DP_WIFI_STRENGTH = "wifiConnectionStrength"
 
 DAIKIN_CMD_SETS = {
     ATTR_ON_OFF: [MP_CLIMATE, DP_ON_OFF, ""],
@@ -82,6 +87,7 @@ DAIKIN_CMD_SETS = {
         "/operationModes/%operationMode%/fanDirection/vertical/currentMode",
     ],
     ATTR_ENERGY_CONSUMPTION: [MP_CLIMATE, DP_CONSUMPTION, "/electrical"],
+    ATTR_WIFI_STRENGTH: [MP_GATEWAY, DP_WIFI_STRENGTH, ""],
 }
 
 ATTR_STATE_ON = "on"
@@ -99,6 +105,7 @@ PRESET_STREAMER = "streamer"
 
 SENSOR_TYPE_TEMPERATURE = "temperature"
 SENSOR_TYPE_HUMIDITY = "humidity"
+SENSOR_TYPE_SIGNAL_STRENGTH = "signal_strength"
 SENSOR_TYPE_POWER = "power"
 SENSOR_TYPE_ENERGY = "energy"
 SENSOR_PERIOD_DAILY = "d"
@@ -136,6 +143,12 @@ SENSOR_TYPES = {
         CONF_ICON: "mdi:fire",
         CONF_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
         CONF_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
+    },
+    ATTR_WIFI_STRENGTH: {
+        CONF_NAME: "WiFi Strength",
+        CONF_TYPE: SENSOR_TYPE_SIGNAL_STRENGTH,
+        CONF_DEVICE_CLASS: DEVICE_CLASS_SIGNAL_STRENGTH,
+        CONF_UNIT_OF_MEASUREMENT: SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
     },
 }
 
