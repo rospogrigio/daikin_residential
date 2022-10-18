@@ -1,4 +1,6 @@
 """Support for Daikin AC sensors."""
+import logging
+
 from homeassistant.const import (
     CONF_DEVICE_CLASS,
     CONF_ICON,
@@ -21,13 +23,17 @@ from .const import (
     ATTR_HEAT_ENERGY,
     ATTR_INSIDE_TEMPERATURE,
     ATTR_OUTSIDE_TEMPERATURE,
+    ATTR_WIFI_STRENGTH,
     SENSOR_TYPE_ENERGY,
     SENSOR_TYPE_HUMIDITY,
     SENSOR_TYPE_POWER,
     SENSOR_TYPE_TEMPERATURE,
+    SENSOR_TYPE_SIGNAL_STRENGTH,
     SENSOR_PERIODS,
     SENSOR_TYPES,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass, async_add_entities):
@@ -43,17 +49,24 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     sensors = []
     for dev_id, device in hass.data[DAIKIN_DOMAIN][DAIKIN_DEVICES].items():
         if device.support_inside_temperature:
+            _LOGGER.debug("device %s supports inside temperature", dev_id)
             sensor = DaikinSensor.factory(device, ATTR_INSIDE_TEMPERATURE)
             sensors.append(sensor)
         if device.support_outside_temperature:
+            _LOGGER.debug("device %s supports outside temperature", device.name)
             sensor = DaikinSensor.factory(device, ATTR_OUTSIDE_TEMPERATURE)
             sensors.append(sensor)
         if device.support_energy_consumption:
+            _LOGGER.debug("device %s supports energy consumption", device.name)
             for period in SENSOR_PERIODS:
                 sensor = DaikinSensor.factory(device, ATTR_COOL_ENERGY, period)
                 sensors.append(sensor)
                 sensor = DaikinSensor.factory(device, ATTR_HEAT_ENERGY, period)
                 sensors.append(sensor)
+        if device.support_wifi_strength:
+            _LOGGER.debug("device %s supports wifi signal strength", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_WIFI_STRENGTH)
+            sensors.append(sensor)
     async_add_entities(sensors)
 
 
@@ -68,6 +81,7 @@ class DaikinSensor(SensorEntity):
             SENSOR_TYPE_HUMIDITY: DaikinClimateSensor,
             SENSOR_TYPE_POWER: DaikinEnergySensor,
             SENSOR_TYPE_ENERGY: DaikinEnergySensor,
+            SENSOR_TYPE_SIGNAL_STRENGTH: DaikinWiFiSensor,
         }[SENSOR_TYPES[monitored_state][CONF_TYPE]]
         return cls(device, monitored_state, period)
 
@@ -163,3 +177,17 @@ class DaikinEnergySensor(DaikinSensor):
     @property
     def state_class(self):
         return STATE_CLASS_TOTAL_INCREASING
+
+
+class DaikinWiFiSensor(DaikinSensor):
+    """Representation of a WiFi Strength Sensor."""
+
+    @property
+    def state(self):
+        """Return the internal state of the sensor."""
+        return self._device.wifi_strength
+
+    @property
+    def state_class(self):
+        return STATE_CLASS_MEASUREMENT
+
