@@ -100,7 +100,8 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             cmd_set = DAIKIN_CMD_SETS[param].copy()
         if "%operationMode%" in cmd_set[2]:
             operation_mode = self.getValue(ATTR_OPERATION_MODE)
-            cmd_set[2] = cmd_set[2].replace("%operationMode%", operation_mode)
+            if operation_mode:
+                cmd_set[2] = cmd_set[2].replace("%operationMode%", operation_mode)
         return cmd_set
 
     def getData(self, param):
