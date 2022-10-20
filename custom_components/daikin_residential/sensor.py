@@ -190,4 +190,3 @@ class DaikinWiFiSensor(DaikinSensor):
     @property
     def state_class(self):
         return STATE_CLASS_MEASUREMENT
-

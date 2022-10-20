@@ -350,7 +350,7 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         ]
         start_index = 7 if period == SENSOR_PERIOD_WEEKLY else 12
         return sum(energy_data[start_index:])
-    
+
     @property
     def support_wifi_strength(self):
         """Return True if the device supports wifi connection strength."""
