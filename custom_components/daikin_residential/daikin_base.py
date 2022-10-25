@@ -9,6 +9,9 @@ from .const import (
     ATTR_INSIDE_TEMPERATURE,
     ATTR_OUTSIDE_TEMPERATURE,
     ATTR_WIFI_STRENGTH,
+    ATTR_WIFI_SSID,
+    ATTR_LOCAL_SSID,
+    ATTR_MAC_ADDRESS,
     ATTR_STATE_OFF,
     ATTR_STATE_ON,
     ATTR_TARGET_TEMPERATURE,
@@ -362,6 +365,36 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
     def wifi_strength(self):
         """Return current wifi connection strength."""
         return self.getValue(ATTR_WIFI_STRENGTH) if self.support_wifi_strength else None
+
+    @property
+    def support_wifi_ssid(self):
+        """Return True if the device supports wifi connection ssid."""
+        return self.getData(ATTR_WIFI_SSID) is not None
+
+    @property
+    def wifi_ssid(self):
+        """Return current wifi connection ssid."""
+        return self.getValue(ATTR_WIFI_SSID) if self.support_wifi_ssid else None
+
+    @property
+    def support_local_ssid(self):
+        """Return True if the device supports internal ssid."""
+        return self.getData(ATTR_LOCAL_SSID) is not None
+
+    @property
+    def local_ssid(self):
+        """Return current internal ssid."""
+        return self.getValue(ATTR_LOCAL_SSID) if self.support_local_ssid else None
+
+    @property
+    def support_mac_address(self):
+        """Return True if the device reports its mac address."""
+        return self.getData(ATTR_MAC_ADDRESS) is not None
+
+    @property
+    def mac_address(self):
+        """Return current mac address."""
+        return self.getValue(ATTR_MAC_ADDRESS) if self.support_mac_address else None
 
     async def set(self, settings):
         """Set settings on Daikin device."""

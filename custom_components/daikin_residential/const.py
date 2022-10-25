@@ -32,6 +32,9 @@ ATTR_TARGET_TEMPERATURE = "target_temperature"
 ATTR_INSIDE_TEMPERATURE = "inside_temperature"
 ATTR_OUTSIDE_TEMPERATURE = "outside_temperature"
 ATTR_WIFI_STRENGTH = "wifi_strength"
+ATTR_WIFI_SSID = "wifi_ssid"
+ATTR_LOCAL_SSID = "local_ssid"
+ATTR_MAC_ADDRESS = "mac_address"
 ATTR_ENERGY_CONSUMPTION = "energy_consumption"
 ATTR_HUMIDITY = "humidity"
 ATTR_TARGET_HUMIDITY = "target_humidity"
@@ -54,6 +57,9 @@ DP_TEMPERATURE = "temperatureControl"
 DP_FAN = "fanControl"
 DP_CONSUMPTION = "consumptionData"
 DP_WIFI_STRENGTH = "wifiConnectionStrength"
+DP_WIFI_SSID = "wifiConnectionSSID"
+DP_LOCAL_SSID = "ssid"
+DP_MAC_ADDRESS = "macAddress"
 
 DAIKIN_CMD_SETS = {
     ATTR_ON_OFF: [MP_CLIMATE, DP_ON_OFF, ""],
@@ -88,6 +94,9 @@ DAIKIN_CMD_SETS = {
     ],
     ATTR_ENERGY_CONSUMPTION: [MP_CLIMATE, DP_CONSUMPTION, "/electrical"],
     ATTR_WIFI_STRENGTH: [MP_GATEWAY, DP_WIFI_STRENGTH, ""],
+    ATTR_WIFI_SSID: [MP_GATEWAY, DP_WIFI_SSID, ""],
+    ATTR_LOCAL_SSID: [MP_GATEWAY, DP_LOCAL_SSID, ""],
+    ATTR_MAC_ADDRESS: [MP_GATEWAY, DP_MAC_ADDRESS, ""],
 }
 
 ATTR_STATE_ON = "on"
@@ -105,7 +114,7 @@ PRESET_STREAMER = "streamer"
 
 SENSOR_TYPE_TEMPERATURE = "temperature"
 SENSOR_TYPE_HUMIDITY = "humidity"
-SENSOR_TYPE_SIGNAL_STRENGTH = "signal_strength"
+SENSOR_TYPE_NETWORK_DIAGNOSTIC = "network_diagnostic"
 SENSOR_TYPE_POWER = "power"
 SENSOR_TYPE_ENERGY = "energy"
 SENSOR_PERIOD_DAILY = "d"
@@ -146,9 +155,27 @@ SENSOR_TYPES = {
     },
     ATTR_WIFI_STRENGTH: {
         CONF_NAME: "WiFi Strength",
-        CONF_TYPE: SENSOR_TYPE_SIGNAL_STRENGTH,
+        CONF_TYPE: SENSOR_TYPE_NETWORK_DIAGNOSTIC,
         CONF_DEVICE_CLASS: DEVICE_CLASS_SIGNAL_STRENGTH,
         CONF_UNIT_OF_MEASUREMENT: SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+    },
+    ATTR_WIFI_SSID: {
+        CONF_NAME: "WiFi SSID",
+        CONF_TYPE: SENSOR_TYPE_NETWORK_DIAGNOSTIC,
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+    },
+    ATTR_LOCAL_SSID: {
+        CONF_NAME: "Internal SSID",
+        CONF_TYPE: SENSOR_TYPE_NETWORK_DIAGNOSTIC,
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+    },
+    ATTR_MAC_ADDRESS: {
+        CONF_NAME: "Mac Address",
+        CONF_TYPE: SENSOR_TYPE_NETWORK_DIAGNOSTIC,
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
     },
 }
 
