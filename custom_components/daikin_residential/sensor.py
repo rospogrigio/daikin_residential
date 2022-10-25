@@ -54,7 +54,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     sensors = []
     for dev_id, device in hass.data[DAIKIN_DOMAIN][DAIKIN_DEVICES].items():
         if device.support_inside_temperature:
-            _LOGGER.debug("device %s supports inside temperature", dev_id)
+            _LOGGER.debug("device %s supports inside temperature", device.name)
             sensor = DaikinSensor.factory(device, ATTR_INSIDE_TEMPERATURE)
             sensors.append(sensor)
         if device.support_outside_temperature:
