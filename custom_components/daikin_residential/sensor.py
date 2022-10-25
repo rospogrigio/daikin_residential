@@ -14,6 +14,8 @@ from homeassistant.components.sensor import (
     STATE_CLASS_TOTAL_INCREASING,
 )
 
+from homeassistant.helpers.entity import EntityCategory
+
 from .daikin_base import Appliance
 
 from .const import (
@@ -180,7 +182,9 @@ class DaikinEnergySensor(DaikinSensor):
 
 
 class DaikinWiFiSensor(DaikinSensor):
-    """Representation of a WiFi Strength Sensor."""
+    """Representation of a WiFi Sensor."""
+    
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     @property
     def state(self):
