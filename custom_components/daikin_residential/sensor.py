@@ -26,11 +26,14 @@ from .const import (
     ATTR_INSIDE_TEMPERATURE,
     ATTR_OUTSIDE_TEMPERATURE,
     ATTR_WIFI_STRENGTH,
+    ATTR_WIFI_SSID,
+    ATTR_LOCAL_SSID,
+    ATTR_MAC_ADDRESS,
     SENSOR_TYPE_ENERGY,
     SENSOR_TYPE_HUMIDITY,
     SENSOR_TYPE_POWER,
     SENSOR_TYPE_TEMPERATURE,
-    SENSOR_TYPE_SIGNAL_STRENGTH,
+    SENSOR_TYPE_NETWORK_DIAGNOSTIC,
     SENSOR_PERIODS,
     SENSOR_TYPES,
 )
@@ -69,6 +72,18 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             _LOGGER.debug("device %s supports wifi signal strength", device.name)
             sensor = DaikinSensor.factory(device, ATTR_WIFI_STRENGTH)
             sensors.append(sensor)
+        if device.support_wifi_ssid:
+            _LOGGER.debug("device %s supports wifi ssid", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_WIFI_SSID)
+            sensors.append(sensor)
+        if device.support_local_ssid:
+            _LOGGER.debug("device %s supports local ssid", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_LOCAL_SSID)
+            sensors.append(sensor)
+        if device.support_mac_address:
+            _LOGGER.debug("device %s supports mac address", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_MAC_ADDRESS)
+            sensors.append(sensor)
     async_add_entities(sensors)
 
 
@@ -83,7 +98,7 @@ class DaikinSensor(SensorEntity):
             SENSOR_TYPE_HUMIDITY: DaikinClimateSensor,
             SENSOR_TYPE_POWER: DaikinEnergySensor,
             SENSOR_TYPE_ENERGY: DaikinEnergySensor,
-            SENSOR_TYPE_SIGNAL_STRENGTH: DaikinWiFiSensor,
+            SENSOR_TYPE_NETWORK_DIAGNOSTIC: DaikinWiFiSensor,
         }[SENSOR_TYPES[monitored_state][CONF_TYPE]]
         return cls(device, monitored_state, period)
 
@@ -189,7 +204,15 @@ class DaikinWiFiSensor(DaikinSensor):
     @property
     def state(self):
         """Return the internal state of the sensor."""
-        return self._device.wifi_strength
+        if self._device_attribute == ATTR_WIFI_STRENGTH:
+            return self._device.wifi_strength
+        if self._device_attribute == ATTR_WIFI_SSID:
+            return self._device.wifi_ssid
+        if self._device_attribute == ATTR_LOCAL_SSID:
+            return self._device.local_ssid
+        if self._device_attribute == ATTR_MAC_ADDRESS:
+            return self._device.mac_address
+        return None
 
     @property
     def state_class(self):
