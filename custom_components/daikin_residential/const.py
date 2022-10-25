@@ -162,6 +162,7 @@ SENSOR_TYPES = {
     ATTR_WIFI_SSID: {
         CONF_NAME: "WiFi SSID",
         CONF_TYPE: SENSOR_TYPE_NETWORK_DIAGNOSTIC,
+        CONF_ICON: "mdi:access-point-network",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
     },

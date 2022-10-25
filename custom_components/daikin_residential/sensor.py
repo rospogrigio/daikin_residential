@@ -220,4 +220,7 @@ class DaikinWiFiSensor(DaikinSensor):
 
     @property
     def state_class(self):
-        return STATE_CLASS_MEASUREMENT
+        if self._device_attribute == ATTR_WIFI_STRENGTH:
+            return STATE_CLASS_MEASUREMENT
+        else:
+            return None
