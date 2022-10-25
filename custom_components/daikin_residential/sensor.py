@@ -199,7 +199,11 @@ class DaikinEnergySensor(DaikinSensor):
 class DaikinWiFiSensor(DaikinSensor):
     """Representation of a WiFi Sensor."""
     
+    # set default category for these entities
     _attr_entity_category = EntityCategory.DIAGNOSTIC
+    
+    # auto disable these entities when added for the first time
+    _attr_entity_registry_enabled_default = False
 
     @property
     def state(self):
