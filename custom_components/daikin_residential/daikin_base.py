@@ -192,7 +192,7 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             fanMode = DAIKIN_FAN_TO_HA[fanMode]
         else:
             fanMode = self.getValue(ATTR_FAN_SPEED)
-        return fanMode
+        return str(fanMode)
 
     @property
     def fan_modes(self):
