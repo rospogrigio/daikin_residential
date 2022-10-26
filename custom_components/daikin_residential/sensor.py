@@ -25,6 +25,7 @@ from .const import (
     ATTR_HEAT_ENERGY,
     ATTR_INSIDE_TEMPERATURE,
     ATTR_OUTSIDE_TEMPERATURE,
+    ATTR_ROOM_HUMIDITY,
     ATTR_WIFI_STRENGTH,
     ATTR_WIFI_SSID,
     ATTR_LOCAL_SSID,
@@ -61,6 +62,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if device.support_outside_temperature:
             _LOGGER.debug("device %s supports outside temperature", device.name)
             sensor = DaikinSensor.factory(device, ATTR_OUTSIDE_TEMPERATURE)
+            sensors.append(sensor)
+        if device.support_room_humidity:
+            _LOGGER.debug("device %s supports room humidity", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_ROOM_HUMIDITY)
             sensors.append(sensor)
         if device.support_energy_consumption:
             _LOGGER.debug("device %s supports energy consumption", device.name)
@@ -177,6 +182,8 @@ class DaikinClimateSensor(DaikinSensor):
             return self._device.inside_temperature
         if self._device_attribute == ATTR_OUTSIDE_TEMPERATURE:
             return self._device.outside_temperature
+        if self._device_attribute == ATTR_ROOM_HUMIDITY:
+            return self._device.room_humidity
         return None
 
     @property
