@@ -34,7 +34,7 @@ from .const import (
     SENSOR_TYPE_HUMIDITY,
     SENSOR_TYPE_POWER,
     SENSOR_TYPE_TEMPERATURE,
-    SENSOR_TYPE_NETWORK_DIAGNOSTIC,
+    SENSOR_TYPE_GATEWAY_DIAGNOSTIC,
     SENSOR_PERIODS,
     SENSOR_TYPES,
 )
@@ -103,7 +103,7 @@ class DaikinSensor(SensorEntity):
             SENSOR_TYPE_HUMIDITY: DaikinClimateSensor,
             SENSOR_TYPE_POWER: DaikinEnergySensor,
             SENSOR_TYPE_ENERGY: DaikinEnergySensor,
-            SENSOR_TYPE_NETWORK_DIAGNOSTIC: DaikinWiFiSensor,
+            SENSOR_TYPE_GATEWAY_DIAGNOSTIC: DaikinGatewaySensor,
         }[SENSOR_TYPES[monitored_state][CONF_TYPE]]
         return cls(device, monitored_state, period)
 
@@ -201,7 +201,7 @@ class DaikinEnergySensor(DaikinSensor):
         return STATE_CLASS_TOTAL_INCREASING
 
 
-class DaikinWiFiSensor(DaikinSensor):
+class DaikinGatewaySensor(DaikinSensor):
     """Representation of a WiFi Sensor."""
     
     # set default category for these entities
