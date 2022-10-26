@@ -29,6 +29,7 @@ from .const import (
     ATTR_WIFI_SSID,
     ATTR_LOCAL_SSID,
     ATTR_MAC_ADDRESS,
+    ATTR_SERIAL_NUMBER,
     SENSOR_TYPE_ENERGY,
     SENSOR_TYPE_HUMIDITY,
     SENSOR_TYPE_POWER,
@@ -83,6 +84,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if device.support_mac_address:
             _LOGGER.debug("device %s supports mac address", device.name)
             sensor = DaikinSensor.factory(device, ATTR_MAC_ADDRESS)
+            sensors.append(sensor)
+        if device.support_serial_number:
+            _LOGGER.debug("device %s supports serial number", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_SERIAL_NUMBER)
             sensors.append(sensor)
     async_add_entities(sensors)
 
@@ -216,6 +221,8 @@ class DaikinWiFiSensor(DaikinSensor):
             return self._device.local_ssid
         if self._device_attribute == ATTR_MAC_ADDRESS:
             return self._device.mac_address
+        if self._device_attribute == ATTR_SERIAL_NUMBER:
+            return self._device.serial_number
         return None
 
     @property
