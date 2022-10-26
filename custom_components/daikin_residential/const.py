@@ -35,6 +35,7 @@ ATTR_WIFI_STRENGTH = "wifi_strength"
 ATTR_WIFI_SSID = "wifi_ssid"
 ATTR_LOCAL_SSID = "local_ssid"
 ATTR_MAC_ADDRESS = "mac_address"
+ATTR_SERIAL_NUMBER = "serial_number"
 ATTR_ENERGY_CONSUMPTION = "energy_consumption"
 ATTR_HUMIDITY = "humidity"
 ATTR_TARGET_HUMIDITY = "target_humidity"
@@ -60,6 +61,7 @@ DP_WIFI_STRENGTH = "wifiConnectionStrength"
 DP_WIFI_SSID = "wifiConnectionSSID"
 DP_LOCAL_SSID = "ssid"
 DP_MAC_ADDRESS = "macAddress"
+DP_SERIAL_NUMBER = "serialNumber"
 
 DAIKIN_CMD_SETS = {
     ATTR_ON_OFF: [MP_CLIMATE, DP_ON_OFF, ""],
@@ -97,6 +99,7 @@ DAIKIN_CMD_SETS = {
     ATTR_WIFI_SSID: [MP_GATEWAY, DP_WIFI_SSID, ""],
     ATTR_LOCAL_SSID: [MP_GATEWAY, DP_LOCAL_SSID, ""],
     ATTR_MAC_ADDRESS: [MP_GATEWAY, DP_MAC_ADDRESS, ""],
+    ATTR_SERIAL_NUMBER: [MP_GATEWAY, DP_SERIAL_NUMBER, ""],
 }
 
 ATTR_STATE_ON = "on"
@@ -175,6 +178,13 @@ SENSOR_TYPES = {
     ATTR_MAC_ADDRESS: {
         CONF_NAME: "Mac Address",
         CONF_TYPE: SENSOR_TYPE_NETWORK_DIAGNOSTIC,
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+    },
+    ATTR_SERIAL_NUMBER: {
+        CONF_NAME: "Serial Number",
+        CONF_TYPE: SENSOR_TYPE_NETWORK_DIAGNOSTIC,
+        CONF_ICON: "mdi:numeric",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
     },

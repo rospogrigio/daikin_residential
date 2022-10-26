@@ -12,6 +12,7 @@ from .const import (
     ATTR_WIFI_SSID,
     ATTR_LOCAL_SSID,
     ATTR_MAC_ADDRESS,
+    ATTR_SERIAL_NUMBER,
     ATTR_STATE_OFF,
     ATTR_STATE_ON,
     ATTR_TARGET_TEMPERATURE,
@@ -394,8 +395,18 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
 
     @property
     def mac_address(self):
-        """Return current mac address."""
+        """Return device mac address."""
         return self.getValue(ATTR_MAC_ADDRESS) if self.support_mac_address else None
+
+    @property
+    def support_serial_number(self):
+        """Return True if the device reports its serial number."""
+        return self.getData(ATTR_SERIAL_NUMBER) is not None
+
+    @property
+    def serial_number(self):
+        """Return device serial number."""
+        return self.getValue(ATTR_SERIAL_NUMBER) if self.support_serial_number else None
 
     async def set(self, settings):
         """Set settings on Daikin device."""
