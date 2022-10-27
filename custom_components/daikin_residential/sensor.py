@@ -203,12 +203,9 @@ class DaikinEnergySensor(DaikinSensor):
 
 class DaikinGatewaySensor(DaikinSensor):
     """Representation of a WiFi Sensor."""
-    
+
     # set default category for these entities
     _attr_entity_category = EntityCategory.DIAGNOSTIC
-    
-    # auto disable these entities when added for the first time
-    _attr_entity_registry_enabled_default = False
 
     @property
     def state(self):
@@ -231,3 +228,8 @@ class DaikinGatewaySensor(DaikinSensor):
             return STATE_CLASS_MEASUREMENT
         else:
             return None
+
+    @property
+    def entity_registry_enabled_default(self):
+        # auto disable these entities when added for the first time except the wifi signal
+        return (self._device_attribute == ATTR_WIFI_STRENGTH)
