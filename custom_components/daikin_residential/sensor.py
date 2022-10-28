@@ -231,5 +231,6 @@ class DaikinGatewaySensor(DaikinSensor):
 
     @property
     def entity_registry_enabled_default(self):
-        # auto disable these entities when added for the first time except the wifi signal
-        return (self._device_attribute == ATTR_WIFI_STRENGTH)
+        # auto disable these entities when added for the first time
+        # except the wifi signal
+        return self._device_attribute == ATTR_WIFI_STRENGTH
