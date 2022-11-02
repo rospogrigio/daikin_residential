@@ -47,9 +47,9 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-if not ENTITY_CATEGORY_DIAGNOSTIC:
-    _LOGGER.warn('You have and older version of Home Assistant, '
-                 'some feature of this integration may not be available')
+if ENTITY_CATEGORY_DIAGNOSTIC is None:
+    _LOGGER.warn('You have and old version of Home Assistant, '
+                 'some features of this integration may not be available')
 
 
 async def async_setup(hass, async_add_entities):
