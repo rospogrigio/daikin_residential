@@ -48,6 +48,7 @@ ATTR_VSWING_MODE = "vswing_mode"
 ATTR_SWING_AUTO = "auto"
 ATTR_SWING_SWING = "swing"
 ATTR_SWING_STOP = "stop"
+ATTR_SWING_FLOOR_HEATING = "floorHeatingAirflow"
 ATTR_COOL_ENERGY = "cool_energy"
 ATTR_HEAT_ENERGY = "heat_energy"
 
@@ -115,6 +116,8 @@ SWING_OFF = "Off"
 SWING_BOTH = "3D"
 SWING_VERTICAL = "Vertical"
 SWING_HORIZONTAL = "Horizontal"
+SWING_FLOOR_HEATING = "Floor Heating"
+SWING_FLOOR_HEATING_AND_HORIZONTAL = "Floor Heating and Horizontal"
 
 PRESET_STREAMER = "streamer"
 
