@@ -235,6 +235,7 @@ SENSOR_TYPES = {
         CONF_TYPE: None,
         CONF_ICON: "mdi:information-outline",
         CONF_UNIT_OF_MEASUREMENT: " ",
+    },
     ATTR_WIFI_STRENGTH: {
         CONF_NAME: "WiFi Strength",
         CONF_TYPE: SENSOR_TYPE_GATEWAY_DIAGNOSTIC,
