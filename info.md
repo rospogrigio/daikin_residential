@@ -2,14 +2,15 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 [![](https://img.shields.io/badge/MAINTAINER-%40rospogrigio-green?style=for-the-badge)](https://github.com/rospogrigio)
 
-# Daikin Residential Controller homeassistant integration
-Cloud control of Daikin devices that are supported by Daikin Residential Controller app.
+# Daikin Residential Controller (ONECTA) homeassistant integration
+Cloud control of Daikin devices that are supported by Daikin Residential Controller (now "ONECTA - Daikin") app. If you want to control a Daikin Altherma you can't use this integration but use the [daikin_residential_altherma](https://github.com/speleolontra/daikin_residential_altherma) or [daikin_residential_brp069a62](https://github.com/BigFoot2020/daikin_residential_brp069a62) integration.
 
 # Compatibility
 
 This integration is verified to be compatible with the following Daikin adapters (usually integrated in the device):
 - BRP069C4x
-The integration might work on Other newer adapters as well, but it is not guaranteed.
+- BRP069B4x
+The integration might work on other newer adapters as well, but it is not guaranteed.
 
 # Installation:
 
@@ -25,7 +26,7 @@ The integration can be configured in two ways:
 
 # 1. YAML config files
 
-Just add the following lines to your configuration.yaml file specifying the email and password used in the Daikin Residential App, and the Daikin devices connected to your cloud account will be created.
+Just add the following lines to your configuration.yaml file specifying the email and password used in the ONECTA App, and the Daikin devices connected to your cloud account will be created.
 
 ```
 daikin_residential:
@@ -39,7 +40,7 @@ daikin_residential:
 
 Start by going to Configuration - Integration and pressing the "+ ADD INTEGRATION" button to create a new Integration, then select Daikin Residential Controller in the drop-down menu.
 
-Follow the instructions, you just have to type the email and password used in the Daikin Residential App. After pressing the "Submit" button, the integration will be added, and the Daikin devices connected to your cloud account will be created.
+Follow the instructions, you just have to type the email and password used in the ONECTA App. After pressing the "Submit" button, the integration will be added, and the Daikin devices connected to your cloud account will be created.
 
 
 # To-do list:

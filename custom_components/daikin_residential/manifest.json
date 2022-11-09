@@ -1,7 +1,7 @@
 {
   "domain": "daikin_residential",
   "name": "Daikin Residential Controller",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "documentation": "https://github.com/rospogrigio/daikin_residential/",
   "dependencies": [],
   "codeowners": [

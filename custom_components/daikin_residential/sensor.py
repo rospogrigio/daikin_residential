@@ -1,4 +1,6 @@
 """Support for Daikin AC sensors."""
+import logging
+
 from homeassistant.const import (
     CONF_DEVICE_CLASS,
     CONF_ICON,
@@ -12,6 +14,8 @@ from homeassistant.components.sensor import (
     STATE_CLASS_TOTAL_INCREASING,
 )
 
+from homeassistant.helpers.entity import EntityCategory
+
 from .daikin_base import Appliance
 
 from .const import (
@@ -21,11 +25,18 @@ from .const import (
     ATTR_HEAT_ENERGY,
     ATTR_INSIDE_TEMPERATURE,
     ATTR_OUTSIDE_TEMPERATURE,
+    ATTR_ROOM_HUMIDITY,
+    ATTR_WIFI_STRENGTH,
+    ATTR_WIFI_SSID,
+    ATTR_LOCAL_SSID,
+    ATTR_MAC_ADDRESS,
+    ATTR_SERIAL_NUMBER,
     SENSOR_TYPE_ENERGY,
     SENSOR_TYPE_HUMIDITY,
     SENSOR_TYPE_POWER,
     SENSOR_TYPE_TEMPERATURE,
     SENSOR_TYPE_INFO,
+    SENSOR_TYPE_GATEWAY_DIAGNOSTIC,
     SENSOR_PERIODS,
     SENSOR_TYPES,
     ATTR_IS_COOLHEATMASTER,
@@ -37,6 +48,8 @@ from .const import (
     ATTR_IS_LOCK_FUNCTION_ENABLED,
     ATTR_IS_POWERFUL_MODE_ACTIVE,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass, async_add_entities):
@@ -52,9 +65,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     sensors = []
     for dev_id, device in hass.data[DAIKIN_DOMAIN][DAIKIN_DEVICES].items():
         if device.support_inside_temperature:
+            _LOGGER.debug("device %s supports inside temperature", device.name)
             sensor = DaikinSensor.factory(device, ATTR_INSIDE_TEMPERATURE)
             sensors.append(sensor)
         if device.support_outside_temperature:
+            _LOGGER.debug("device %s supports outside temperature", device.name)
             sensor = DaikinSensor.factory(device, ATTR_OUTSIDE_TEMPERATURE)
             sensors.append(sensor)
         if device.support_is_coolheatmaster:
@@ -74,13 +89,37 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             sensors.append(sensor)
         if device.support_is_powerful_mode_active:
             sensor = DaikinSensor.factory(device, ATTR_IS_POWERFUL_MODE_ACTIVE)
+        if device.support_room_humidity:
+            _LOGGER.debug("device %s supports room humidity", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_ROOM_HUMIDITY)
             sensors.append(sensor)
         if device.support_energy_consumption:
+            _LOGGER.debug("device %s supports energy consumption", device.name)
             for period in SENSOR_PERIODS:
                 sensor = DaikinSensor.factory(device, ATTR_COOL_ENERGY, period)
                 sensors.append(sensor)
                 sensor = DaikinSensor.factory(device, ATTR_HEAT_ENERGY, period)
                 sensors.append(sensor)
+        if device.support_wifi_strength:
+            _LOGGER.debug("device %s supports wifi signal strength", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_WIFI_STRENGTH)
+            sensors.append(sensor)
+        if device.support_wifi_ssid:
+            _LOGGER.debug("device %s supports wifi ssid", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_WIFI_SSID)
+            sensors.append(sensor)
+        if device.support_local_ssid:
+            _LOGGER.debug("device %s supports local ssid", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_LOCAL_SSID)
+            sensors.append(sensor)
+        if device.support_mac_address:
+            _LOGGER.debug("device %s supports mac address", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_MAC_ADDRESS)
+            sensors.append(sensor)
+        if device.support_serial_number:
+            _LOGGER.debug("device %s supports serial number", device.name)
+            sensor = DaikinSensor.factory(device, ATTR_SERIAL_NUMBER)
+            sensors.append(sensor)
     async_add_entities(sensors)
 
 
@@ -96,6 +135,7 @@ class DaikinSensor(SensorEntity):
             SENSOR_TYPE_POWER: DaikinEnergySensor,
             SENSOR_TYPE_ENERGY: DaikinEnergySensor,
             SENSOR_TYPE_INFO: DaikinInfoSensor,
+            SENSOR_TYPE_GATEWAY_DIAGNOSTIC: DaikinGatewaySensor,
         }[SENSOR_TYPES[monitored_state][CONF_TYPE]]
         return cls(device, monitored_state, period)
 
@@ -169,6 +209,8 @@ class DaikinClimateSensor(DaikinSensor):
             return self._device.inside_temperature
         if self._device_attribute == ATTR_OUTSIDE_TEMPERATURE:
             return self._device.outside_temperature
+        if self._device_attribute == ATTR_ROOM_HUMIDITY:
+            return self._device.room_humidity
         return None
 
     @property
@@ -220,3 +262,38 @@ class DaikinEnergySensor(DaikinSensor):
     @property
     def state_class(self):
         return STATE_CLASS_TOTAL_INCREASING
+
+
+class DaikinGatewaySensor(DaikinSensor):
+    """Representation of a WiFi Sensor."""
+
+    # set default category for these entities
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    @property
+    def state(self):
+        """Return the internal state of the sensor."""
+        if self._device_attribute == ATTR_WIFI_STRENGTH:
+            return self._device.wifi_strength
+        if self._device_attribute == ATTR_WIFI_SSID:
+            return self._device.wifi_ssid
+        if self._device_attribute == ATTR_LOCAL_SSID:
+            return self._device.local_ssid
+        if self._device_attribute == ATTR_MAC_ADDRESS:
+            return self._device.mac_address
+        if self._device_attribute == ATTR_SERIAL_NUMBER:
+            return self._device.serial_number
+        return None
+
+    @property
+    def state_class(self):
+        if self._device_attribute == ATTR_WIFI_STRENGTH:
+            return STATE_CLASS_MEASUREMENT
+        else:
+            return None
+
+    @property
+    def entity_registry_enabled_default(self):
+        # auto disable these entities when added for the first time
+        # except the wifi signal
+        return self._device_attribute == ATTR_WIFI_STRENGTH

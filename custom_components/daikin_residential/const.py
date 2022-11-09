@@ -8,9 +8,13 @@ from homeassistant.const import (
     CONF_TYPE,
     CONF_UNIT_OF_MEASUREMENT,
     DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_HUMIDITY,
     DEVICE_CLASS_ENERGY,
+    DEVICE_CLASS_SIGNAL_STRENGTH,
     ENERGY_KILO_WATT_HOUR,
     TEMP_CELSIUS,
+    PERCENTAGE,
+    SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
 )
 
 DOMAIN = "daikin_residential"
@@ -29,8 +33,13 @@ ATTR_TEMPERATURE = "temperature"
 ATTR_TARGET_TEMPERATURE = "target_temperature"
 ATTR_INSIDE_TEMPERATURE = "inside_temperature"
 ATTR_OUTSIDE_TEMPERATURE = "outside_temperature"
+ATTR_WIFI_STRENGTH = "wifi_strength"
+ATTR_WIFI_SSID = "wifi_ssid"
+ATTR_LOCAL_SSID = "local_ssid"
+ATTR_MAC_ADDRESS = "mac_address"
+ATTR_SERIAL_NUMBER = "serial_number"
 ATTR_ENERGY_CONSUMPTION = "energy_consumption"
-ATTR_HUMIDITY = "humidity"
+ATTR_ROOM_HUMIDITY = "room_humidity"
 ATTR_TARGET_HUMIDITY = "target_humidity"
 ATTR_FAN_MODE = "fan_mode"
 ATTR_FAN_SPEED = "fan_speed"
@@ -51,12 +60,18 @@ ATTR_IS_LOCK_FUNCTION_ENABLED = "isLockFunctionEnabled"
 ATTR_IS_POWERFUL_MODE_ACTIVE = "isPowerfulModeActive"
 
 MP_CLIMATE = "climateControl"
+MP_GATEWAY = "gateway"
 DP_ON_OFF = "onOffMode"
 DP_OPERATION_MODE = "operationMode"
 DP_SENSORS = "sensoryData"
 DP_TEMPERATURE = "temperatureControl"
 DP_FAN = "fanControl"
 DP_CONSUMPTION = "consumptionData"
+DP_WIFI_STRENGTH = "wifiConnectionStrength"
+DP_WIFI_SSID = "wifiConnectionSSID"
+DP_LOCAL_SSID = "ssid"
+DP_MAC_ADDRESS = "macAddress"
+DP_SERIAL_NUMBER = "serialNumber"
 
 DAIKIN_CMD_SETS = {
     ATTR_ON_OFF: [MP_CLIMATE, DP_ON_OFF, ""],
@@ -72,6 +87,7 @@ DAIKIN_CMD_SETS = {
     ATTR_IS_IN_WARNING_STATE: [MP_CLIMATE, ATTR_IS_IN_WARNING_STATE, ""],
     ATTR_IS_LOCK_FUNCTION_ENABLED: [MP_CLIMATE, ATTR_IS_LOCK_FUNCTION_ENABLED, ""],
     ATTR_IS_POWERFUL_MODE_ACTIVE: [MP_CLIMATE, ATTR_IS_POWERFUL_MODE_ACTIVE, ""],
+    ATTR_ROOM_HUMIDITY: [MP_CLIMATE, DP_SENSORS, "/roomHumidity"],
     ATTR_TARGET_TEMPERATURE: [
         MP_CLIMATE,
         DP_TEMPERATURE,
@@ -98,6 +114,11 @@ DAIKIN_CMD_SETS = {
         "/operationModes/%operationMode%/fanDirection/vertical/currentMode",
     ],
     ATTR_ENERGY_CONSUMPTION: [MP_CLIMATE, DP_CONSUMPTION, "/electrical"],
+    ATTR_WIFI_STRENGTH: [MP_GATEWAY, DP_WIFI_STRENGTH, ""],
+    ATTR_WIFI_SSID: [MP_GATEWAY, DP_WIFI_SSID, ""],
+    ATTR_LOCAL_SSID: [MP_GATEWAY, DP_LOCAL_SSID, ""],
+    ATTR_MAC_ADDRESS: [MP_GATEWAY, DP_MAC_ADDRESS, ""],
+    ATTR_SERIAL_NUMBER: [MP_GATEWAY, DP_SERIAL_NUMBER, ""],
 }
 
 ATTR_STATE_ON = "on"
@@ -115,6 +136,7 @@ PRESET_STREAMER = "streamer"
 
 SENSOR_TYPE_TEMPERATURE = "temperature"
 SENSOR_TYPE_HUMIDITY = "humidity"
+SENSOR_TYPE_GATEWAY_DIAGNOSTIC = "gateway_diagnostic"
 SENSOR_TYPE_POWER = "power"
 SENSOR_TYPE_ENERGY = "energy"
 SENSOR_TYPE_INFO = None
@@ -140,6 +162,12 @@ SENSOR_TYPES = {
         CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
         CONF_UNIT_OF_MEASUREMENT: TEMP_CELSIUS,
     },
+    ATTR_ROOM_HUMIDITY: {
+        CONF_NAME: "Room Humidity",
+        CONF_TYPE: SENSOR_TYPE_HUMIDITY,
+        CONF_DEVICE_CLASS: DEVICE_CLASS_HUMIDITY,
+        CONF_UNIT_OF_MEASUREMENT: PERCENTAGE,
+    },
     ATTR_COOL_ENERGY: {
         CONF_NAME: "Cool Energy Consumption",
         CONF_TYPE: SENSOR_TYPE_ENERGY,
@@ -154,6 +182,7 @@ SENSOR_TYPES = {
         CONF_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
         CONF_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
     },
+<<<<<<< HEAD
     ATTR_IS_COOLHEATMASTER: {
         CONF_NAME: "Is CoolHeat Master",
         CONF_TYPE: None,
@@ -207,6 +236,39 @@ SENSOR_TYPES = {
         CONF_TYPE: None,
         CONF_ICON: "mdi:information-outline",
         CONF_UNIT_OF_MEASUREMENT: " ",
+=======
+    ATTR_WIFI_STRENGTH: {
+        CONF_NAME: "WiFi Strength",
+        CONF_TYPE: SENSOR_TYPE_GATEWAY_DIAGNOSTIC,
+        CONF_DEVICE_CLASS: DEVICE_CLASS_SIGNAL_STRENGTH,
+        CONF_UNIT_OF_MEASUREMENT: SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+    },
+    ATTR_WIFI_SSID: {
+        CONF_NAME: "WiFi SSID",
+        CONF_TYPE: SENSOR_TYPE_GATEWAY_DIAGNOSTIC,
+        CONF_ICON: "mdi:access-point-network",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+    },
+    ATTR_LOCAL_SSID: {
+        CONF_NAME: "Internal SSID",
+        CONF_TYPE: SENSOR_TYPE_GATEWAY_DIAGNOSTIC,
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+    },
+    ATTR_MAC_ADDRESS: {
+        CONF_NAME: "Mac Address",
+        CONF_TYPE: SENSOR_TYPE_GATEWAY_DIAGNOSTIC,
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+    },
+    ATTR_SERIAL_NUMBER: {
+        CONF_NAME: "Serial Number",
+        CONF_TYPE: SENSOR_TYPE_GATEWAY_DIAGNOSTIC,
+        CONF_ICON: "mdi:numeric",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+>>>>>>> master
     },
 }
 

@@ -8,6 +8,12 @@ from .const import (
     PRESET_STREAMER,
     ATTR_INSIDE_TEMPERATURE,
     ATTR_OUTSIDE_TEMPERATURE,
+    ATTR_ROOM_HUMIDITY,
+    ATTR_WIFI_STRENGTH,
+    ATTR_WIFI_SSID,
+    ATTR_LOCAL_SSID,
+    ATTR_MAC_ADDRESS,
+    ATTR_SERIAL_NUMBER,
     ATTR_STATE_OFF,
     ATTR_STATE_ON,
     ATTR_TARGET_TEMPERATURE,
@@ -108,7 +114,8 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             cmd_set = DAIKIN_CMD_SETS[param].copy()
         if "%operationMode%" in cmd_set[2]:
             operation_mode = self.getValue(ATTR_OPERATION_MODE)
-            cmd_set[2] = cmd_set[2].replace("%operationMode%", operation_mode)
+            if operation_mode:
+                cmd_set[2] = cmd_set[2].replace("%operationMode%", operation_mode)
         return cmd_set
 
     def getData(self, param):
@@ -168,7 +175,8 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
     def support_preset_mode(self, mode):
         """Return True if the device supports preset mode."""
         mode = HA_PRESET_TO_DAIKIN[mode]
-        return self.getData(mode) is not None
+        mode_data = self.getData(mode)
+        return mode_data is not None and "value" in mode_data
 
     def preset_mode_status(self, mode):
         """Return the preset mode status."""
@@ -197,7 +205,7 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             fanMode = DAIKIN_FAN_TO_HA[fanMode]
         else:
             fanMode = self.getValue(ATTR_FAN_SPEED)
-        return fanMode
+        return str(fanMode)
 
     @property
     def fan_modes(self):
@@ -221,6 +229,7 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             return await self.setValue(ATTR_FAN_MODE, HA_FAN_TO_DAIKIN[mode])
         if mode.isnumeric():
             mode = int(mode)
+        await self.setValue(ATTR_FAN_MODE, "fixed")
         return await self.setValue(ATTR_FAN_SPEED, mode)
 
     @property
@@ -276,9 +285,14 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             await self.setValue(ATTR_VSWING_MODE, new_vMode)
 
     @property
-    def support_humidity(self):
+    def support_room_humidity(self):
         """Return True if the device has humidity sensor."""
-        return False
+        return self.getData(ATTR_ROOM_HUMIDITY) is not None
+
+    @property
+    def room_humidity(self):
+        """Return current room humidity."""
+        return self.getValue(ATTR_ROOM_HUMIDITY) if self.support_room_humidity else None
 
     @property
     def support_inside_temperature(self):
@@ -437,6 +451,56 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
     def is_powerful_mode_active(self):
         """Return current isPowerfulModeActive."""
         return self.getValue(ATTR_IS_POWERFUL_MODE_ACTIVE)
+
+    @property
+    def support_wifi_strength(self):
+        """Return True if the device supports wifi connection strength."""
+        return self.getData(ATTR_WIFI_STRENGTH) is not None
+
+    @property
+    def wifi_strength(self):
+        """Return current wifi connection strength."""
+        return self.getValue(ATTR_WIFI_STRENGTH) if self.support_wifi_strength else None
+
+    @property
+    def support_wifi_ssid(self):
+        """Return True if the device supports wifi connection ssid."""
+        return self.getData(ATTR_WIFI_SSID) is not None
+
+    @property
+    def wifi_ssid(self):
+        """Return current wifi connection ssid."""
+        return self.getValue(ATTR_WIFI_SSID) if self.support_wifi_ssid else None
+
+    @property
+    def support_local_ssid(self):
+        """Return True if the device supports internal ssid."""
+        return self.getData(ATTR_LOCAL_SSID) is not None
+
+    @property
+    def local_ssid(self):
+        """Return current internal ssid."""
+        return self.getValue(ATTR_LOCAL_SSID) if self.support_local_ssid else None
+
+    @property
+    def support_mac_address(self):
+        """Return True if the device reports its mac address."""
+        return self.getData(ATTR_MAC_ADDRESS) is not None
+
+    @property
+    def mac_address(self):
+        """Return device mac address."""
+        return self.getValue(ATTR_MAC_ADDRESS) if self.support_mac_address else None
+
+    @property
+    def support_serial_number(self):
+        """Return True if the device reports its serial number."""
+        return self.getData(ATTR_SERIAL_NUMBER) is not None
+
+    @property
+    def serial_number(self):
+        """Return device serial number."""
+        return self.getValue(ATTR_SERIAL_NUMBER) if self.support_serial_number else None
 
     async def set(self, settings):
         """Set settings on Daikin device."""
