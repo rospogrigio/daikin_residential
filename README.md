@@ -48,7 +48,7 @@ Follow the instructions, you just have to type the email and password used in th
 
 **Solution:** probably your system time is too out of sync with the token issuer's one. Make sure your system datetime is up-to-date, and in general it is advised to connect to an NTP server to keep your datetime synced.
 
-- I am having other general network problems that don't allow me to get or update the connection token**
+- I am having other general network problems that don't allow me to get or update the connection token
 
 **Solution:** make sure you don't have issues connecting to the address **kinesis.eu-west-1.amazonaws.com** or similar. In general, check if you have any web filtering or adblocking system that might interfere with these connections: try to disable them, and if it starts working then try whitelisting this address or similar.
 
