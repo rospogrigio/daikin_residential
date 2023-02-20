@@ -76,23 +76,23 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 sensors.append(sensor)
         if device.getData(ATTR_WIFI_STRENGTH) is not None:
             _LOGGER.debug("device %s supports wifi signal strength", device.name)
-            sensor = DaikinSensor.factory(device, ATTR_WIFI_STRENGTH, "")
+            sensor = DaikinSensor.factory(device, ATTR_WIFI_STRENGTH)
             sensors.append(sensor)
         if device.getData(ATTR_WIFI_SSID) is not None:
             _LOGGER.debug("device %s supports wifi ssid", device.name)
-            sensor = DaikinSensor.factory(device, ATTR_WIFI_SSID, "")
+            sensor = DaikinSensor.factory(device, ATTR_WIFI_SSID)
             sensors.append(sensor)
         if device.getData(ATTR_LOCAL_SSID) is not None:
             _LOGGER.debug("device %s supports local ssid", device.name)
-            sensor = DaikinSensor.factory(device, ATTR_LOCAL_SSID, "")
+            sensor = DaikinSensor.factory(device, ATTR_LOCAL_SSID)
             sensors.append(sensor)
         if device.getData(ATTR_MAC_ADDRESS) is not None:
             _LOGGER.debug("device %s supports mac address", device.name)
-            sensor = DaikinSensor.factory(device, ATTR_MAC_ADDRESS, "")
+            sensor = DaikinSensor.factory(device, ATTR_MAC_ADDRESS)
             sensors.append(sensor)
         if device.getData(ATTR_SERIAL_NUMBER) is not None:
             _LOGGER.debug("device %s supports serial number", device.name)
-            sensor = DaikinSensor.factory(device, ATTR_SERIAL_NUMBER, "")
+            sensor = DaikinSensor.factory(device, ATTR_SERIAL_NUMBER)
             sensors.append(sensor)
     async_add_entities(sensors)
 
