@@ -6,9 +6,6 @@ from .device import DaikinResidentialDevice
 
 from .const import (
     PRESET_STREAMER,
-    ATTR_INSIDE_TEMPERATURE,
-    ATTR_OUTSIDE_TEMPERATURE,
-    ATTR_ROOM_HUMIDITY,
     ATTR_WIFI_STRENGTH,
     ATTR_WIFI_SSID,
     ATTR_LOCAL_SSID,
@@ -275,40 +272,6 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             await self.setValue(ATTR_HSWING_MODE, new_hMode)
         if vMode != new_vMode:
             await self.setValue(ATTR_VSWING_MODE, new_vMode)
-
-    @property
-    def support_room_humidity(self):
-        """Return True if the device has humidity sensor."""
-        return self.getData(ATTR_ROOM_HUMIDITY) is not None
-
-    @property
-    def room_humidity(self):
-        """Return current room humidity."""
-        return self.getValue(ATTR_ROOM_HUMIDITY) if self.support_room_humidity else None
-
-    @property
-    def support_inside_temperature(self):
-        """Return True if the device supports outsite temperature measurement."""
-        return self.getData(ATTR_INSIDE_TEMPERATURE) is not None
-
-    @property
-    def support_outside_temperature(self):
-        """Return True if the device supports outsite temperature measurement."""
-        return self.getData(ATTR_OUTSIDE_TEMPERATURE) is not None
-
-    @property
-    def outside_temperature(self):
-        """Return current outside temperature."""
-        if not self.support_outside_temperature:
-            return None
-        return float(self.getValue(ATTR_OUTSIDE_TEMPERATURE))
-
-    @property
-    def inside_temperature(self):
-        """Return current inside temperature."""
-        if not self.support_inside_temperature:
-            return None
-        return float(self.getValue(ATTR_INSIDE_TEMPERATURE))
 
     @property
     def target_temperature(self):
