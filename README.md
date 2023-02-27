@@ -6,13 +6,14 @@ Cloud control of Daikin devices that are supported by Daikin Residential Control
 This integration is verified to be compatible with the following Daikin adapters (usually integrated in the device):
 - BRP069C4x
 - BRP069B4x
-The integration might work on other newer adapters as well, but it is not guaranteed.
+
+The integration might work on other newer adapters as well, but it is not guaranteed (please report if you find it working with other adapters).
 
 # Installation:
 
 Copy the daikin_residential folder and all of its contents into your Home Assistant's custom_components folder. This is often located inside of your /config folder. If you are running Hass.io, use SAMBA to copy the folder over. If you are running Home Assistant Supervised, the custom_components folder might be located at /usr/share/hassio/homeassistant. It is possible that your custom_components folder does not exist. If that is the case, create the folder in the proper location, and then copy the daikin_residential folder and all of its contents inside the newly created custom_components folder.
 
-Alternatively, you can install daikin_residential through HACS by adding this repository.
+Alternatively, you can install daikin_residential through HACS by adding this as a custom repository: press the three dots on the top right -> custom repositories -> type this URL in the Repository field and select Integration in the Category field. 
 
 # Usage:
 
@@ -38,6 +39,19 @@ Start by going to Configuration - Integration and pressing the "+ ADD INTEGRATIO
 
 Follow the instructions, you just have to type the email and password used in the ONECTA App. After pressing the "Submit" button, the integration will be added, and the Daikin devices connected to your cloud account will be created.
 
+# Known Issues and troubleshooting
+
+- I am getting the following error when adding the integration: **Failed to retrieve Access Token: ('Login failed: %s', Exception('Unknown Login error: Login Failed Captcha Required'))**
+
+**Solution:** when you have logged in to Daikin services, you have probably used the "Login with Google account" or other service. Try registering on Daikin platform, or register another account and share the devices with that account, then use that second account to configure this Integration.
+
+- I am getting the following error when adding the integration: **Failed to retrieve Access Token: ('Failed to retrieve access token: %s', IATError('Issued in the future'))**
+
+**Solution:** probably your system time is too out of sync with the token issuer's one. Make sure your system datetime is up-to-date, and in general it is advised to connect to an NTP server to keep your datetime synced.
+
+- I am having other general network problems that don't allow me to get or update the connection token
+
+**Solution:** make sure you don't have issues connecting to the address **kinesis.eu-west-1.amazonaws.com** or similar. In general, check if you have any web filtering or adblocking system that might interfere with these connections: try to disable them, and if it starts working then try whitelisting this address or similar.
 
 # To-do list:
 
