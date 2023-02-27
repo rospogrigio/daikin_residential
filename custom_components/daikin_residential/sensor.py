@@ -223,28 +223,11 @@ class DaikinInfoSensor(DaikinSensor):
     @property
     def state(self):
         """Return the internal state of the sensor."""
-        if self._device_attribute == ATTR_IS_COOLHEATMASTER:
-            return self._device.is_coolheatmaster
-        if self._device_attribute == ATTR_IS_HOLIDAYMODE_ACTIVE:
-            return self._device.is_holidaymode_active
-        if self._device_attribute == ATTR_IS_IN_CAUTION_STATE:
-            return self._device.is_in_caution_state
-        if self._device_attribute == ATTR_IS_IN_ERROR_STATE:
-            return self._device.is_in_error_state
-        if self._device_attribute == ATTR_IS_IN_MODECONFLICT:
-            return self._device.is_in_mode_conflict
-        if self._device_attribute == ATTR_IS_IN_WARNING_STATE:
-            return self._device.is_in_warning_state
-        if self._device_attribute == ATTR_IS_LOCK_FUNCTION_ENABLED:
-            return self._device.is_lock_function_enabled
-        if self._device_attribute == ATTR_IS_POWERFUL_MODE_ACTIVE:
-            return self._device.is_powerful_mode_active
-        return None
+        return self._device.getValue(self._device_attribute)
 
     @property
     def state_class(self):
         return STATE_CLASS_MEASUREMENT
-
 
 
 class DaikinEnergySensor(DaikinSensor):
