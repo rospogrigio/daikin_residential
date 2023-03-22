@@ -101,7 +101,7 @@ class DaikinResidentialDevice:
         dataPoints = {}
 
         for mp in self.desc["managementPoints"]:
-            #           print('AAAA: [{}] [{}]'.format(mp['embeddedId'], mp))
+            #           print('AAAA: [{}] [{}]'.format(mp['managementPointType'], mp))
             dataPoints = {}
             for key in mp.keys():
                 dataPoints[key] = {}
@@ -119,7 +119,7 @@ class DaikinResidentialDevice:
                         mp[key]["value"], {}
                     )
 
-            self.managementPoints[mp["embeddedId"]] = dataPoints
+            self.managementPoints[mp["managementPointType"]] = dataPoints
 
         # print('MPS FOUND: [{}]'.format(self.managementPoints))
         # print('MPS FOUND: [{}]'.format(self.managementPoints.keys()))
