@@ -20,7 +20,9 @@ from .const import (
     FAN_QUIET,
     SWING_OFF,
     SWING_BOTH,
+    SWING_COMFORT_AND_HORIZONTAL,
     SWING_VERTICAL,
+    SWING_COMFORT,
     SWING_HORIZONTAL,
     DAIKIN_CMD_SETS,
     ATTR_ON_OFF,
@@ -28,6 +30,7 @@ from .const import (
     ATTR_FAN_SPEED,
     ATTR_HSWING_MODE,
     ATTR_VSWING_MODE,
+    ATTR_SWING_COMFORT,
     ATTR_SWING_SWING,
     ATTR_SWING_STOP,
     ATTR_ENERGY_CONSUMPTION,
@@ -237,10 +240,16 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         if hMode != ATTR_SWING_STOP:
             swingMode = SWING_HORIZONTAL
         if vMode != ATTR_SWING_STOP:
-            if hMode != ATTR_SWING_STOP:
-                swingMode = SWING_BOTH
+            if vMode == ATTR_SWING_COMFORT:
+                if hMode != ATTR_SWING_STOP:
+                    swingMode = SWING_COMFORT_AND_HORIZONTAL
+                else:
+                    swingMode = SWING_COMFORT
             else:
-                swingMode = SWING_VERTICAL
+                if hMode != ATTR_SWING_STOP:
+                    swingMode = SWING_BOTH
+                else:
+                    swingMode = SWING_VERTICAL
         return swingMode
 
     @property
@@ -253,6 +262,10 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             swingModes.append(SWING_HORIZONTAL)
         if vMode is not None:
             swingModes.append(SWING_VERTICAL)
+            if ATTR_SWING_COMFORT in vMode['values']:
+                swingModes.append(SWING_COMFORT)
+                if hMode is not None:
+                    swingModes.append(SWING_COMFORT_AND_HORIZONTAL)
             if hMode is not None:
                 swingModes.append(SWING_BOTH)
         return swingModes
@@ -263,13 +276,17 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         vMode = self.getValue(ATTR_VSWING_MODE)
         new_hMode = (
             ATTR_SWING_SWING
-            if mode == SWING_HORIZONTAL or mode == SWING_BOTH
+            if mode in (SWING_HORIZONTAL, SWING_BOTH, SWING_COMFORT_AND_HORIZONTAL)
             else ATTR_SWING_STOP
         )
         new_vMode = (
             ATTR_SWING_SWING
-            if mode == SWING_VERTICAL or mode == SWING_BOTH
-            else ATTR_SWING_STOP
+            if mode in (SWING_VERTICAL, SWING_BOTH)
+            else (
+                ATTR_SWING_COMFORT
+                if mode in (SWING_COMFORT_AND_HORIZONTAL, SWING_COMFORT)
+                else ATTR_SWING_STOP
+            )
         )
         if hMode != new_hMode:
             await self.setValue(ATTR_HSWING_MODE, new_hMode)
