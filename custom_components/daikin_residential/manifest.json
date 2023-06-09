@@ -1,7 +1,7 @@
 {
   "domain": "daikin_residential",
   "name": "Daikin Residential Controller",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "documentation": "https://github.com/rospogrigio/daikin_residential/",
   "dependencies": [],
   "codeowners": [
@@ -9,7 +9,7 @@
   ],
   "issue_tracker": "https://github.com/rospogrigio/daikin_residential/issues",
   "requirements": [
-     "oic==1.4.0"
+     "oic==1.6.0"
   ],
   "iot_class": "cloud_polling",
   "config_flow": true
