@@ -260,21 +260,23 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
     async def async_set_swing_mode(self, mode):
         """Set the preset mode status."""
         hMode = self.getValue(ATTR_HSWING_MODE)
+        if hMode is not None:
+            new_hMode = (
+                ATTR_SWING_SWING
+                if mode == SWING_HORIZONTAL or mode == SWING_BOTH
+                else ATTR_SWING_STOP
+            )
+            if hMode != new_hMode:
+                await self.setValue(ATTR_HSWING_MODE, new_hMode)
         vMode = self.getValue(ATTR_VSWING_MODE)
-        new_hMode = (
-            ATTR_SWING_SWING
-            if mode == SWING_HORIZONTAL or mode == SWING_BOTH
-            else ATTR_SWING_STOP
-        )
-        new_vMode = (
-            ATTR_SWING_SWING
-            if mode == SWING_VERTICAL or mode == SWING_BOTH
-            else ATTR_SWING_STOP
-        )
-        if hMode != new_hMode:
-            await self.setValue(ATTR_HSWING_MODE, new_hMode)
-        if vMode != new_vMode:
-            await self.setValue(ATTR_VSWING_MODE, new_vMode)
+        if vMode is not None:
+            new_vMode = (
+                ATTR_SWING_SWING
+                if mode == SWING_VERTICAL or mode == SWING_BOTH
+                else ATTR_SWING_STOP
+            )
+            if vMode != new_vMode:
+                await self.setValue(ATTR_VSWING_MODE, new_vMode)
 
     @property
     def support_room_humidity(self):
