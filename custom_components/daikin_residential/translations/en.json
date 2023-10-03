@@ -24,5 +24,11 @@
                 "title": "Configure Daikin Residential Controller AC"
             }
         }
+    },
+    "services": {
+        "reload": {
+            "name": "Reload",
+            "description": "Retrieve new access TokenSet by logging in again to Daikin Cloud."
+        }
     }
 }
