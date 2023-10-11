@@ -21,8 +21,6 @@ Alternatively, you can install daikin_residential through HACS by adding this as
 
 # Usage:
 
-**NOTE: since v.2.0.x, the tokenset.json file is no longer needed because the integration can connect and retrieve the tokens autonomously. When installing v.2.0.x from a previous one, the integration must be deleted and re-added.**
-
 The integration can be configured in two ways:
 
 # 1. YAML config files
