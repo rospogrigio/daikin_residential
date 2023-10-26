@@ -27,8 +27,8 @@ Just add the following lines to your configuration.yaml file specifying the emai
 
 ```
 daikin_residential:
-  email: [your_email]
-  password: [your_pwd]
+  email: 'your_email'
+  password: 'your_pwd'
 
 ```
 
