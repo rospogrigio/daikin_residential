@@ -8,9 +8,6 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from .const import DOMAIN
 
 
-MIN_TIME_BETWEEN_UPDATES = datetime.timedelta(seconds=15)
-
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -186,56 +183,6 @@ class DaikinResidentialDevice:
         if data is None:
             return None
         return data["values"]
-
-    @Throttle(MIN_TIME_BETWEEN_UPDATES)
-    async def updateData(self):
-        """Update the data of self device from the cloud."""
-        return
-        # TODO: Enhance self method to also allow to get some partial data
-        # like only one managementPoint or such; needs checking how to request
-        print("DEV UPDATE " + self.name)
-        desc = await self.api.doBearerRequest("/v1/gateway-devices/" + self.getId())
-        self.setJsonData(desc)
-        print("DEVICE: " + self.name)
-        print(
-            "    temp: inner "
-            + str(self.get_value("climateControl", "sensoryData", "/roomTemperature"))
-            + " outer "
-            + str(
-                self.get_value("climateControl", "sensoryData", "/outdoorTemperature")
-            )
-        )
-        print(
-            "    current mode: "
-            + str(self.get_value("climateControl", "operationMode"))
-            + "  "
-            + str(self.get_value("climateControl", "onOffMode"))
-        )
-        print(
-            "    target temp: "
-            + str(
-                self.get_value(
-                    "climateControl",
-                    "temperatureControl",
-                    "/operationModes/cooling/setpoints/roomTemperature",
-                )
-            )
-        )
-        print(
-            "    FAN: mode [{}] speed [{}]\n".format(
-                self.get_value(
-                    "climateControl",
-                    "fanControl",
-                    "/operationModes/auto/fanSpeed/currentMode",
-                ),
-                self.get_value(
-                    "climateControl",
-                    "fanControl",
-                    "/operationModes/auto/fanSpeed/modes/fixed",
-                ),
-            )
-        )
-        return True
 
     def _validateData(self, dataPoint, descr, value):
         """Validates a value that should be sent to the Daikin Device."""
