@@ -10,7 +10,7 @@ Cloud control of Daikin devices that are supported by Daikin Residential Control
 This integration is verified to be compatible with the following Daikin adapters (usually integrated in the device):
 - BRP069C4x
 - BRP069B4x
-- 
+
 The integration might work on other newer adapters as well, but it is not guaranteed (please report if you find it working with other adapters).
 
 # Installation:
@@ -31,8 +31,8 @@ Just add the following lines to your configuration.yaml file specifying the emai
 
 ```
 daikin_residential:
-  email: [your_email]
-  password: [your_pwd]
+  email: 'your_email'
+  password: 'your_pwd'
 
 ```
 
