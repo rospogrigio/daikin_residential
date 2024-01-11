@@ -95,17 +95,16 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry):
 async def async_unload_entry(hass, config_entry):
     """Unload a config entry."""
     _LOGGER.debug("Unloading integration...")
-    await asyncio.wait(
-        [
+    await asyncio.gather(
+        *(
             hass.config_entries.async_forward_entry_unload(config_entry, component)
             for component in COMPONENT_TYPES
-        ]
+        )
     )
     hass.data[DOMAIN].clear()
     if not hass.data[DOMAIN]:
         hass.data.pop(DOMAIN)
     return True
-
 
 async def daikin_api_setup(hass, host, key, uuid, password):
     """Create a Daikin instance only once."""
