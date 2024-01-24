@@ -9,23 +9,15 @@ from homeassistant.components.climate.const import (
     ATTR_HVAC_MODE,
     ATTR_PRESET_MODE,
     ATTR_SWING_MODE,
-    HVAC_MODE_COOL,
-    HVAC_MODE_DRY,
-    HVAC_MODE_FAN_ONLY,
-    HVAC_MODE_HEAT,
-    HVAC_MODE_HEAT_COOL,
-    HVAC_MODE_OFF,
     PRESET_AWAY,
     PRESET_COMFORT,
     PRESET_BOOST,
     PRESET_ECO,
     PRESET_NONE,
-    SUPPORT_TARGET_TEMPERATURE,
-    SUPPORT_FAN_MODE,
-    SUPPORT_PRESET_MODE,
-    SUPPORT_SWING_MODE,
+    ClimateEntityFeature,
+    HVACMode
 )
-from homeassistant.const import ATTR_TEMPERATURE, CONF_HOST, CONF_NAME, TEMP_CELSIUS
+from homeassistant.const import ATTR_TEMPERATURE, CONF_HOST, CONF_NAME, UnitOfTemperature
 import homeassistant.helpers.config_validation as cv
 
 from .const import (
@@ -36,7 +28,7 @@ from .const import (
     ATTR_ON_OFF,
     ATTR_STATE_OFF,
     ATTR_STATE_ON,
-    ATTR_TARGET_TEMPERATURE,
+    ATTR_TARGET_TEMPERATURE
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -49,12 +41,12 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 PRESET_MODES = {PRESET_BOOST, PRESET_COMFORT, PRESET_ECO, PRESET_AWAY}
 
 HA_HVAC_TO_DAIKIN = {
-    HVAC_MODE_FAN_ONLY: "fanOnly",
-    HVAC_MODE_DRY: "dry",
-    HVAC_MODE_COOL: "cooling",
-    HVAC_MODE_HEAT: "heating",
-    HVAC_MODE_HEAT_COOL: "auto",
-    HVAC_MODE_OFF: "off",
+    HVACMode.FAN_ONLY: "fanOnly",
+    HVACMode.DRY: "dry",
+    HVACMode.COOL: "cooling",
+    HVACMode.HEAT: "heating",
+    HVACMode.HEAT_COOL: "auto",
+    HVACMode.OFF: "off",
 }
 
 
@@ -99,20 +91,20 @@ class DaikinClimate(ClimateEntity):
             ATTR_SWING_MODE: self._device.swing_modes,
         }
 
-        self._supported_features = SUPPORT_TARGET_TEMPERATURE
+        self._supported_features = ClimateEntityFeature.TARGET_TEMPERATURE
 
         self._supported_preset_modes = [PRESET_NONE]
         self._current_preset_mode = PRESET_NONE
         for mode in PRESET_MODES:
             if self._device.support_preset_mode(mode):
                 self._supported_preset_modes.append(mode)
-                self._supported_features |= SUPPORT_PRESET_MODE
+                self._supported_features |= ClimateEntityFeature.PRESET_MODE
 
         if self._device.support_fan_rate:
-            self._supported_features |= SUPPORT_FAN_MODE
+            self._supported_features |= ClimateEntityFeature.FAN_MODE
 
         if self._device.support_swing_mode:
-            self._supported_features |= SUPPORT_SWING_MODE
+            self._supported_features |= ClimateEntityFeature.SWING_MODE
 
     async def _set(self, settings):
         """Set device settings using API."""
@@ -166,7 +158,7 @@ class DaikinClimate(ClimateEntity):
     @property
     def temperature_unit(self):
         """Return the unit of measurement which this thermostat uses."""
-        return TEMP_CELSIUS
+        return UnitOfTemperature.CELSIUS
 
     @property
     def current_temperature(self):
