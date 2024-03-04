@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This integration will not work anymore after March 11th 2024 due to changes made by Daikin (see [https://github.com/rospogrigio/daikin_residential/issues/204](https://github.com/rospogrigio/daikin_residential/issues/182#issuecomment-1933967548)). Please migrate to the [daikin_onecta](https://github.com/jwillemsen/daikin_onecta) integration which supports the Daikin AC units but also other types of Daikin devices. 
+
 # Daikin Residential Controller (ONECTA) homeassistant integration
 Cloud control of Daikin devices that are supported by Daikin Residential Controller (now "ONECTA - Daikin") app. If you want to control a Daikin Altherma you can't use this integration but use the [daikin_residential_altherma](https://github.com/speleolontra/daikin_residential_altherma) or [daikin_residential_brp069a62](https://github.com/BigFoot2020/daikin_residential_brp069a62) integration.
 
