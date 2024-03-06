@@ -38,12 +38,6 @@ from homeassistant.components.climate.const import (
     ATTR_FAN_MODE,
     ATTR_PRESET_MODE,
     FAN_AUTO,
-    HVAC_MODE_COOL,
-    HVAC_MODE_DRY,
-    HVAC_MODE_FAN_ONLY,
-    HVAC_MODE_HEAT,
-    HVAC_MODE_HEAT_COOL,
-    HVAC_MODE_OFF,
     PRESET_AWAY,
     PRESET_COMFORT,
     PRESET_BOOST,
@@ -51,6 +45,7 @@ from homeassistant.components.climate.const import (
     PRESET_NONE,
     DEFAULT_MAX_TEMP,
     DEFAULT_MIN_TEMP,
+    HVACMode
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -65,12 +60,12 @@ HA_PRESET_TO_DAIKIN = {
 }
 
 DAIKIN_HVAC_TO_HA = {
-    "fanOnly": HVAC_MODE_FAN_ONLY,
-    "dry": HVAC_MODE_DRY,
-    "cooling": HVAC_MODE_COOL,
-    "heating": HVAC_MODE_HEAT,
-    "auto": HVAC_MODE_HEAT_COOL,
-    "off": HVAC_MODE_OFF,
+    "fanOnly": HVACMode.FAN_ONLY,
+    "dry": HVACMode.DRY,
+    "cooling": HVACMode.COOL,
+    "heating": HVACMode.HEAT,
+    "auto": HVACMode.HEAT_COOL,
+    "off": HVACMode.OFF
 }
 
 DAIKIN_FAN_TO_HA = {"auto": FAN_AUTO, "quiet": FAN_QUIET}
@@ -142,25 +137,25 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
     @property
     def hvac_mode(self):
         """Return current HVAC mode."""
-        mode = HVAC_MODE_OFF
+        mode = HVACMode.OFF
         if self.getValue(ATTR_ON_OFF) != ATTR_STATE_OFF:
             mode = self.getValue(ATTR_OPERATION_MODE)
-        return DAIKIN_HVAC_TO_HA.get(mode, HVAC_MODE_HEAT_COOL)
+        return DAIKIN_HVAC_TO_HA.get(mode, HVACMode.HEAT_COOL)
 
     @property
     def hvac_modes(self):
         """Return the list of available HVAC modes."""
-        modes = [HVAC_MODE_OFF]
+        modes = [HVACMode.OFF]
         for mode in self.getValidValues(ATTR_OPERATION_MODE):
             modes.append(DAIKIN_HVAC_TO_HA[mode])
         return modes
 
     async def async_set_hvac_mode(self, hvac_mode):
         """Set HVAC mode."""
-        if hvac_mode == HVAC_MODE_OFF:
+        if hvac_mode == HVACMode.OFF:
             return await self.setValue(ATTR_ON_OFF, ATTR_STATE_OFF)
         else:
-            if self.hvac_mode == HVAC_MODE_OFF:
+            if self.hvac_mode == HVACMode.OFF:
                 await self.setValue(ATTR_ON_OFF, ATTR_STATE_ON)
             return await self.setValue(ATTR_OPERATION_MODE, hvac_mode)
 

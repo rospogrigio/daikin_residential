@@ -136,3 +136,6 @@ dmypy.json
 # PyDev Eclipse projects
 .project
 .pydevproject
+
+# Pycharm
+.idea/

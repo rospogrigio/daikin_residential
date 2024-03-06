@@ -1,5 +1,5 @@
 """Constants for Daikin Residential Controller."""
-
+from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import (
     CONF_DEVICE_CLASS,
     CONF_TOKEN,
@@ -7,14 +7,10 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_TYPE,
     CONF_UNIT_OF_MEASUREMENT,
-    DEVICE_CLASS_TEMPERATURE,
-    DEVICE_CLASS_HUMIDITY,
-    DEVICE_CLASS_ENERGY,
-    DEVICE_CLASS_SIGNAL_STRENGTH,
-    ENERGY_KILO_WATT_HOUR,
-    TEMP_CELSIUS,
     PERCENTAGE,
     SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+    UnitOfTemperature,
+    UnitOfEnergy
 )
 
 DOMAIN = "daikin_residential"
@@ -136,39 +132,39 @@ SENSOR_TYPES = {
     ATTR_INSIDE_TEMPERATURE: {
         CONF_NAME: "Inside Temperature",
         CONF_TYPE: SENSOR_TYPE_TEMPERATURE,
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        CONF_UNIT_OF_MEASUREMENT: TEMP_CELSIUS,
+        CONF_DEVICE_CLASS: SensorDeviceClass.TEMPERATURE,
+        CONF_UNIT_OF_MEASUREMENT: UnitOfTemperature.CELSIUS,
     },
     ATTR_OUTSIDE_TEMPERATURE: {
         CONF_NAME: "Outside Temperature",
         CONF_TYPE: SENSOR_TYPE_TEMPERATURE,
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        CONF_UNIT_OF_MEASUREMENT: TEMP_CELSIUS,
+        CONF_DEVICE_CLASS: SensorDeviceClass.TEMPERATURE,
+        CONF_UNIT_OF_MEASUREMENT: UnitOfTemperature.CELSIUS,
     },
     ATTR_ROOM_HUMIDITY: {
         CONF_NAME: "Room Humidity",
         CONF_TYPE: SENSOR_TYPE_HUMIDITY,
-        CONF_DEVICE_CLASS: DEVICE_CLASS_HUMIDITY,
+        CONF_DEVICE_CLASS: SensorDeviceClass.HUMIDITY,
         CONF_UNIT_OF_MEASUREMENT: PERCENTAGE,
     },
     ATTR_COOL_ENERGY: {
         CONF_NAME: "Cool Energy Consumption",
         CONF_TYPE: SENSOR_TYPE_ENERGY,
         CONF_ICON: "mdi:snowflake",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
-        CONF_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
+        CONF_DEVICE_CLASS: SensorDeviceClass.ENERGY,
+        CONF_UNIT_OF_MEASUREMENT: UnitOfEnergy.KILO_WATT_HOUR,
     },
     ATTR_HEAT_ENERGY: {
         CONF_NAME: "Heat Energy Consumption",
         CONF_TYPE: SENSOR_TYPE_ENERGY,
         CONF_ICON: "mdi:fire",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_ENERGY,
-        CONF_UNIT_OF_MEASUREMENT: ENERGY_KILO_WATT_HOUR,
+        CONF_DEVICE_CLASS: SensorDeviceClass.ENERGY,
+        CONF_UNIT_OF_MEASUREMENT: UnitOfEnergy.KILO_WATT_HOUR,
     },
     ATTR_WIFI_STRENGTH: {
         CONF_NAME: "WiFi Strength",
         CONF_TYPE: SENSOR_TYPE_GATEWAY_DIAGNOSTIC,
-        CONF_DEVICE_CLASS: DEVICE_CLASS_SIGNAL_STRENGTH,
+        CONF_DEVICE_CLASS: SensorDeviceClass.SIGNAL_STRENGTH,
         CONF_UNIT_OF_MEASUREMENT: SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
     },
     ATTR_WIFI_SSID: {
