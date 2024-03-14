@@ -46,7 +46,7 @@ Follow the instructions, you just have to type the email and password used in th
 
 - I am getting the following error when adding the integration: **Failed to retrieve Access Token: ('Login failed: %s', Exception('Unknown Login error: Login Failed Captcha Required'))**
 
-**Solution:** when you have logged in to Daikin services, you have probably used the "Login with Google account" or other service. Try registering on Daikin platform, or register another account and share the devices with that account, then use that second account to configure this Integration.
+**Solution:** when you have logged in to Daikin services, you have probably used the "Login with Google account" or other service. You can logout and request a password reset when loging back in. This will enable you to login through the integration. Alterntatively, register another account and share the devices with that account. Then use that second account to configure this Integration.
 
 - I am getting the following error when adding the integration: **Failed to retrieve Access Token: ('Failed to retrieve access token: %s', IATError('Issued in the future'))**
 
