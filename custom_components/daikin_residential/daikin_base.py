@@ -22,6 +22,8 @@ from .const import (
     SWING_BOTH,
     SWING_VERTICAL,
     SWING_HORIZONTAL,
+    SWING_FLOOR_HEATING,
+    SWING_FLOOR_HEATING_AND_HORIZONTAL,
     DAIKIN_CMD_SETS,
     ATTR_ON_OFF,
     ATTR_OPERATION_MODE,
@@ -30,6 +32,7 @@ from .const import (
     ATTR_VSWING_MODE,
     ATTR_SWING_SWING,
     ATTR_SWING_STOP,
+    ATTR_SWING_FLOOR_HEATING,
     ATTR_ENERGY_CONSUMPTION,
     SENSOR_PERIOD_WEEKLY,
 )
@@ -234,13 +237,19 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         swingMode = SWING_OFF
         hMode = self.getValue(ATTR_HSWING_MODE)
         vMode = self.getValue(ATTR_VSWING_MODE)
-        if hMode != ATTR_SWING_STOP:
+        if hMode not in (None, ATTR_SWING_STOP):
             swingMode = SWING_HORIZONTAL
-        if vMode != ATTR_SWING_STOP:
-            if hMode != ATTR_SWING_STOP:
-                swingMode = SWING_BOTH
+        if vMode not in (None, ATTR_SWING_STOP):
+            if vMode == ATTR_SWING_FLOOR_HEATING:
+                if hMode not in (None, ATTR_SWING_STOP):
+                    swingMode = SWING_FLOOR_HEATING_AND_HORIZONTAL
+                else:
+                    swingMode = SWING_FLOOR_HEATING
             else:
-                swingMode = SWING_VERTICAL
+                if hMode not in (None, ATTR_SWING_STOP):
+                    swingMode = SWING_BOTH
+                else:
+                    swingMode = SWING_VERTICAL
         return swingMode
 
     @property
@@ -253,6 +262,10 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
             swingModes.append(SWING_HORIZONTAL)
         if vMode is not None:
             swingModes.append(SWING_VERTICAL)
+            if ATTR_SWING_FLOOR_HEATING in vMode['values']:
+                swingModes.append(SWING_FLOOR_HEATING)
+                if hMode is not None:
+                    swingModes.append(SWING_FLOOR_HEATING_AND_HORIZONTAL)
             if hMode is not None:
                 swingModes.append(SWING_BOTH)
         return swingModes
@@ -263,17 +276,21 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         vMode = self.getValue(ATTR_VSWING_MODE)
         new_hMode = (
             ATTR_SWING_SWING
-            if mode == SWING_HORIZONTAL or mode == SWING_BOTH
+            if mode in (SWING_HORIZONTAL, SWING_BOTH, SWING_FLOOR_HEATING_AND_HORIZONTAL)
             else ATTR_SWING_STOP
         )
         new_vMode = (
             ATTR_SWING_SWING
-            if mode == SWING_VERTICAL or mode == SWING_BOTH
-            else ATTR_SWING_STOP
+            if mode in (SWING_VERTICAL, SWING_BOTH)
+            else (
+                ATTR_SWING_FLOOR_HEATING
+                if mode in (SWING_FLOOR_HEATING_AND_HORIZONTAL, SWING_FLOOR_HEATING)
+                else ATTR_SWING_STOP
+            )
         )
-        if hMode != new_hMode:
+        if hMode not in (None, new_hMode):
             await self.setValue(ATTR_HSWING_MODE, new_hMode)
-        if vMode != new_vMode:
+        if vMode not in (None, new_vMode):
             await self.setValue(ATTR_VSWING_MODE, new_vMode)
 
     @property
