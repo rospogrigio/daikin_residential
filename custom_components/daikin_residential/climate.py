@@ -205,6 +205,11 @@ class DaikinClimate(ClimateEntity):
         await self._device.async_set_temperature(kwargs[ATTR_TEMPERATURE])
 
     @property
+    def hvac_action(self):
+        """Return current action ie. heat, cool, idle."""
+        return self._device.hvac_action
+
+    @property
     def hvac_mode(self):
         """Return current operation ie. heat, cool, idle."""
         return self._device.hvac_mode

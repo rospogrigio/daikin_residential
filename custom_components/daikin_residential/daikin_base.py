@@ -51,6 +51,7 @@ from homeassistant.components.climate.const import (
     PRESET_NONE,
     DEFAULT_MAX_TEMP,
     DEFAULT_MIN_TEMP,
+    HVACAction,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -71,6 +72,15 @@ DAIKIN_HVAC_TO_HA = {
     "heating": HVAC_MODE_HEAT,
     "auto": HVAC_MODE_HEAT_COOL,
     "off": HVAC_MODE_OFF,
+}
+
+HVAC_MODE_TO_ACTION = {
+    HVAC_MODE_FAN_ONLY: HVACAction.FAN,
+    HVAC_MODE_DRY: HVACAction.DRYING,
+    HVAC_MODE_COOL: HVACAction.COOLING,
+    HVAC_MODE_HEAT: HVACAction.HEATING,
+    # HVAC_MODE_HEAT_COOL: TODO - How can we know whether its heating or cooling? API doesn't seem to say...
+    HVAC_MODE_OFF: HVACAction.OFF,
 }
 
 DAIKIN_FAN_TO_HA = {"auto": FAN_AUTO, "quiet": FAN_QUIET}
@@ -146,6 +156,11 @@ class Appliance(DaikinResidentialDevice):  # pylint: disable=too-many-public-met
         if self.getValue(ATTR_ON_OFF) != ATTR_STATE_OFF:
             mode = self.getValue(ATTR_OPERATION_MODE)
         return DAIKIN_HVAC_TO_HA.get(mode, HVAC_MODE_HEAT_COOL)
+
+    @property
+    def hvac_action(self):
+        """Return current HVAC action."""
+        return HVAC_MODE_TO_ACTION.get(self.hvac_mode)
 
     @property
     def hvac_modes(self):
