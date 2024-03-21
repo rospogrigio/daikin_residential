@@ -14,7 +14,12 @@ from homeassistant.components.sensor import (
     STATE_CLASS_TOTAL_INCREASING,
 )
 
-from homeassistant.helpers.entity import EntityCategory
+try:
+    from homeassistant.helpers.entity import EntityCategory
+    ENTITY_CATEGORY_DIAGNOSTIC = EntityCategory.DIAGNOSTIC
+except ImportError:
+    # home assistant version is below 2021.12.0
+    ENTITY_CATEGORY_DIAGNOSTIC = None
 
 from .daikin_base import Appliance
 
@@ -41,6 +46,10 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+if ENTITY_CATEGORY_DIAGNOSTIC is None:
+    _LOGGER.warn('You have and old version of Home Assistant, '
+                 'some features of this integration may not be available')
 
 
 async def async_setup(hass, async_add_entities):
@@ -212,7 +221,7 @@ class DaikinGatewaySensor(DaikinSensor):
     """Representation of a WiFi Sensor."""
 
     # set default category for these entities
-    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_entity_category = ENTITY_CATEGORY_DIAGNOSTIC
 
     @property
     def state(self):
