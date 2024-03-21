@@ -55,15 +55,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up Daikin climate based on config_entry."""
     sensors = []
     for dev_id, device in hass.data[DAIKIN_DOMAIN][DAIKIN_DEVICES].items():
-        if device.support_inside_temperature:
+        if device.getData(ATTR_INSIDE_TEMPERATURE) is not None:
             _LOGGER.debug("device %s supports inside temperature", device.name)
             sensor = DaikinSensor.factory(device, ATTR_INSIDE_TEMPERATURE)
             sensors.append(sensor)
-        if device.support_outside_temperature:
+        if device.getData(ATTR_OUTSIDE_TEMPERATURE) is not None:
             _LOGGER.debug("device %s supports outside temperature", device.name)
             sensor = DaikinSensor.factory(device, ATTR_OUTSIDE_TEMPERATURE)
             sensors.append(sensor)
-        if device.support_room_humidity:
+        if device.getData(ATTR_ROOM_HUMIDITY) is not None:
             _LOGGER.debug("device %s supports room humidity", device.name)
             sensor = DaikinSensor.factory(device, ATTR_ROOM_HUMIDITY)
             sensors.append(sensor)
@@ -178,13 +178,7 @@ class DaikinClimateSensor(DaikinSensor):
     @property
     def state(self):
         """Return the internal state of the sensor."""
-        if self._device_attribute == ATTR_INSIDE_TEMPERATURE:
-            return self._device.inside_temperature
-        if self._device_attribute == ATTR_OUTSIDE_TEMPERATURE:
-            return self._device.outside_temperature
-        if self._device_attribute == ATTR_ROOM_HUMIDITY:
-            return self._device.room_humidity
-        return None
+        return self._device.getValue(self._device_attribute)
 
     @property
     def state_class(self):
