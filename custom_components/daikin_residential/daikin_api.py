@@ -519,23 +519,34 @@ class DaikinApi:
                     dev_data
                 )
 
-            _mode = "none"
+            # print a warning in case of error code from Daikin cloud
+            if dev_data["managementPoints"][1]["isInErrorState"]["value"]:
+                _LOGGER.warning("DEVICE %s in error with code '%s'",
+                    dev_data["managementPoints"][1]["name"]["value"],
+                    dev_data["managementPoints"][1]["errorCode"]["value"])
+
+            # print info on devices
             mp_data = dev_data["managementPoints"][1]
+
+            _presetmode = "none"
             if "econoMode" in mp_data and mp_data["econoMode"]["value"] == "on":
-                _mode = "eco"
+                _presetmode = "eco"
             if "powerfulMode" in mp_data and mp_data["powerfulMode"]["value"] == "on":
-                _mode = "powerful"
+                _presetmode = "powerful"
 
             _streamer = "not supported"
             if "streamerMode" in mp_data:
-                _streamer = "streamer " + mp_data["streamerMode"]["value"]
-            _LOGGER.debug(
-                "DEVICE %s: %s/%s/%s/%s",
-                dev_data["managementPoints"][1]["name"]["value"],
-                dev_data["managementPoints"][1]["onOffMode"]["value"],
-                dev_data["managementPoints"][1]["operationMode"]["value"],
-                _mode,
-                _streamer,
-            )
+                _streamer = mp_data["streamerMode"]["value"]
+
+            _opmode = mp_data["operationMode"]["value"]
+
+            _LOGGER.debug("DEVICE %s: status=%s, mode=%s, hfan=%s, vfan=%s, preset=%s, streamer=%s",
+                mp_data["name"]["value"],
+                mp_data["onOffMode"]["value"],
+                _opmode,
+                mp_data["fanControl"]["value"]["operationModes"][_opmode]["fanDirection"]["horizontal"]["currentMode"]["value"],
+                mp_data["fanControl"]["value"]["operationModes"][_opmode]["fanDirection"]["vertical"]["currentMode"]["value"],
+                _presetmode,
+                _streamer)
 
         return True
