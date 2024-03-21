@@ -74,23 +74,23 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                 sensors.append(sensor)
                 sensor = DaikinSensor.factory(device, ATTR_HEAT_ENERGY, period)
                 sensors.append(sensor)
-        if device.support_wifi_strength:
+        if device.getData(ATTR_WIFI_STRENGTH) is not None:
             _LOGGER.debug("device %s supports wifi signal strength", device.name)
             sensor = DaikinSensor.factory(device, ATTR_WIFI_STRENGTH)
             sensors.append(sensor)
-        if device.support_wifi_ssid:
+        if device.getData(ATTR_WIFI_SSID) is not None:
             _LOGGER.debug("device %s supports wifi ssid", device.name)
             sensor = DaikinSensor.factory(device, ATTR_WIFI_SSID)
             sensors.append(sensor)
-        if device.support_local_ssid:
+        if device.getData(ATTR_LOCAL_SSID) is not None:
             _LOGGER.debug("device %s supports local ssid", device.name)
             sensor = DaikinSensor.factory(device, ATTR_LOCAL_SSID)
             sensors.append(sensor)
-        if device.support_mac_address:
+        if device.getData(ATTR_MAC_ADDRESS) is not None:
             _LOGGER.debug("device %s supports mac address", device.name)
             sensor = DaikinSensor.factory(device, ATTR_MAC_ADDRESS)
             sensors.append(sensor)
-        if device.support_serial_number:
+        if device.getData(ATTR_SERIAL_NUMBER) is not None:
             _LOGGER.debug("device %s supports serial number", device.name)
             sensor = DaikinSensor.factory(device, ATTR_SERIAL_NUMBER)
             sensors.append(sensor)
@@ -217,17 +217,7 @@ class DaikinGatewaySensor(DaikinSensor):
     @property
     def state(self):
         """Return the internal state of the sensor."""
-        if self._device_attribute == ATTR_WIFI_STRENGTH:
-            return self._device.wifi_strength
-        if self._device_attribute == ATTR_WIFI_SSID:
-            return self._device.wifi_ssid
-        if self._device_attribute == ATTR_LOCAL_SSID:
-            return self._device.local_ssid
-        if self._device_attribute == ATTR_MAC_ADDRESS:
-            return self._device.mac_address
-        if self._device_attribute == ATTR_SERIAL_NUMBER:
-            return self._device.serial_number
-        return None
+        return self._device.getValue(self._device_attribute)
 
     @property
     def state_class(self):
